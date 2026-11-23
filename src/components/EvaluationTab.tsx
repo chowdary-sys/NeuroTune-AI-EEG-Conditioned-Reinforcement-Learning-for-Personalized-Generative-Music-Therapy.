@@ -331,7 +331,7 @@ export const EvaluationTab: React.FC = () => {
       {activeSubTab === 'ablation' && (
         <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
           <div className="p-3.5 rounded-lg bg-cyan-950/20 border border-cyan-500/30 text-xs text-slate-200 mb-4 leading-relaxed">
-            <strong className="text-cyan-300">In Simple Words:</strong> Turning off individual pieces lowers performance. Without brainwaves (<strong>No EEG</strong>), success drops from <strong>60.3%</strong> to <strong>24.9%</strong>. Without remembering the previous step (<strong>No feedback</strong>), success drops to <strong>51.0%</strong>.
+            <strong className="text-cyan-300">In Simple Words:</strong> Turning off individual pieces lowers performance. Without brainwaves (<strong>w/o EEG input</strong>), success drops from <strong>60.3%</strong> to <strong>20.5%</strong>. Without remembering the previous step (<strong>w/o feedback inputs</strong>), success drops to <strong>53.7%</strong>.
           </div>
 
           <h3 className="text-sm font-semibold text-white mb-2">
