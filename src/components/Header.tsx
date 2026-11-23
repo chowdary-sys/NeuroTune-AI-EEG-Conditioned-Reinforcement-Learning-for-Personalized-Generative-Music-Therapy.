@@ -32,31 +32,34 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleLoop,
 }) => {
   const navItems: Array<{ id: NavTab; label: string }> = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'eeg', label: 'EEG Monitor' },
-    { id: 'emotion', label: 'Emotion Space' },
-    { id: 'music', label: 'AI Music' },
-    { id: 'rl', label: 'RL Engine' },
-    { id: 'closed_loop', label: 'Closed Loop' },
-    { id: 'benchmarks', label: 'Benchmarks' },
-    { id: 'history', label: 'Sessions' },
+    { id: 'overview', label: 'Home' },
+    { id: 'eeg', label: 'Brainwaves' },
+    { id: 'emotion', label: 'Mood Map' },
+    { id: 'music', label: 'Music Player' },
+    { id: 'rl', label: 'AI Brain' },
+    { id: 'closed_loop', label: 'Live Loop' },
+    { id: 'benchmarks', label: 'Paper Results' },
+    { id: 'history', label: 'Saved Sessions' },
   ];
 
   return (
     <header className="sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-8 h-16">
-          {/* Zone 1: Single text wordmark */}
+        <div className="flex items-center justify-between gap-4 h-16">
+          {/* Brand wordmark */}
           <div className="flex items-center gap-3 shrink-0">
-            <span className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+            <button
+              onClick={() => onSelectTab('overview')}
+              className="text-lg font-bold tracking-tight text-white flex items-center gap-2 cursor-pointer whitespace-nowrap"
+            >
               <span className="p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
                 <Activity className="w-5 h-5" />
               </span>
               NeuroTune AI
-            </span>
+            </button>
           </div>
 
-          {/* Zone 2: Concise single-line navigation links */}
+          {/* Single-line navigation links */}
           <nav className="hidden lg:flex items-center gap-1 overflow-x-auto py-1 scrollbar-none">
             {navItems.map((item) => {
               const isActive = activeTab === item.id;
@@ -76,24 +79,24 @@ export const Header: React.FC<HeaderProps> = ({
             })}
           </nav>
 
-          {/* Zone 3: Primary action + modal triggers */}
-          <div className="flex items-center gap-2.5 shrink-0">
+          {/* Action buttons */}
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={onOpenDocsModal}
-              title="Research Paper Specifications"
-              className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-900 rounded-lg border border-slate-800 transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-mono"
+              title="Read a simple guide to the research paper"
+              className="px-2.5 py-2 text-slate-300 hover:text-white hover:bg-slate-900 rounded-lg border border-slate-800 transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-medium whitespace-nowrap shrink-0"
             >
               <BookOpen className="w-4 h-4 text-cyan-400" />
-              <span className="hidden sm:inline">Paper</span>
+              <span className="hidden sm:inline">Paper Guide</span>
             </button>
 
             <button
               onClick={onOpenProfileModal}
-              title="Subject Profile Settings"
-              className="px-3 py-2 text-xs text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800/80 rounded-lg border border-slate-800 transition-colors cursor-pointer flex items-center gap-1.5 font-mono"
+              title="Pick or customize the listener profile"
+              className="px-3 py-2 text-xs text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800/80 rounded-lg border border-slate-800 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0"
             >
               <User className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="max-w-[110px] truncate">{activeProfile.name.split(' ')[0]}</span>
+              <span className="max-w-[110px] truncate">{activeProfile.name.split('(')[0].trim()}</span>
             </button>
 
             <button
@@ -105,7 +108,7 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <span className="w-2 h-2 rounded-full bg-current"></span>
-              {isLoopRunning ? 'Pause Loop' : 'Run Loop'}
+              {isLoopRunning ? 'Pause Therapy' : 'Start Therapy'}
             </button>
           </div>
         </div>
@@ -118,7 +121,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 key={item.id}
                 onClick={() => onSelectTab(item.id)}
-                className={`px-2.5 py-1 text-xs font-medium rounded-md whitespace-nowrap shrink-0 transition-colors ${
+                className={`px-2.5 py-1 text-xs font-medium rounded-md whitespace-nowrap shrink-0 transition-colors cursor-pointer ${
                   isActive
                     ? 'bg-slate-800 text-cyan-400'
                     : 'text-slate-400 hover:text-slate-200'

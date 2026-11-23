@@ -2,16 +2,12 @@ import React, { useState } from 'react';
 import {
   AlertTriangle,
   Brain,
-  CheckCircle2,
-  HelpCircle,
+  Info,
   Layers,
-  RotateCcw,
-  Sliders,
 } from 'lucide-react';
 import { defaultRidgeEncoder } from '../services/ridgeRegression';
 import { defaultClosedLoopController } from '../services/closedLoopController';
 import { EmotionCircumplex } from './EmotionCircumplex';
-import { EmotionState } from '../types/neurotune';
 
 export const EmotionDetectionTab: React.FC = () => {
   const [lambda, setLambda] = useState<number>(defaultRidgeEncoder.getRegularization());
@@ -25,47 +21,70 @@ export const EmotionDetectionTab: React.FC = () => {
   };
 
   const featureLabels = [
-    'θ_F3 (Theta Left Frontal)',
-    'α_F3 (Alpha Left Frontal)',
-    'β_F3 (Beta Left Frontal)',
-    'θ_F4 (Theta Right Frontal)',
-    'α_F4 (Alpha Right Frontal)',
-    'β_F4 (Beta Right Frontal)',
-    'θ_Pz (Theta Parietal)',
-    'α_Pz (Alpha Parietal)',
-    'β_Pz (Beta Parietal)',
-    'FAA (Frontal Alpha Asymmetry)',
-    'Arousal Ratio [β / (α + θ)]',
+    'Theta · Front Left (Sleepy)',
+    'Alpha · Front Left (Relaxed)',
+    'Beta · Front Left (Alert)',
+    'Theta · Front Right (Sleepy)',
+    'Alpha · Front Right (Relaxed)',
+    'Beta · Front Right (Alert)',
+    'Theta · Top Back (Sleepy)',
+    'Alpha · Top Back (Relaxed)',
+    'Beta · Top Back (Alert)',
+    'Left-Right Happiness Balance (FAA)',
+    'Energy Ratio [Beta / (Alpha + Theta)]',
   ];
+
+  const friendlyQuadrant = (q: string) => {
+    switch (q) {
+      case 'Anxious/Tense':
+        return 'Stressed / Tense';
+      case 'Excited/Joyful':
+        return 'Happy / Excited';
+      case 'Depressed/Sad':
+        return 'Sad / Tired';
+      case 'Serene/Calm':
+        return 'Calm / Relaxed';
+      default:
+        return q;
+    }
+  };
 
   return (
     <div className="space-y-6">
-      {/* Research Disclaimer Box (Strict compliance with guidelines) */}
+      {/* Simple Intro Banner */}
+      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex items-start gap-3">
+        <Info className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+        <div className="text-xs text-slate-300 leading-relaxed">
+          <strong className="text-white block mb-0.5">What This Page Does:</strong>
+          The app turns 11 brainwave numbers into two simple mood scores: <strong>Mood Feel (Valence)</strong> from sad to happy,
+          and <strong>Energy Level (Arousal)</strong> from calm to tense. Click anywhere on the map to set a new Calm Goal!
+        </div>
+      </div>
+
+      {/* Non-Clinical Notice */}
       <div className="bg-amber-950/20 border border-amber-500/40 rounded-2xl p-4 flex items-start gap-3 text-amber-200">
         <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
         <div className="space-y-1 text-xs">
           <div className="font-semibold text-amber-300">
-            RESEARCH SIMULATION NOTICE: NON-CLINICAL VALIDATION BOUNDARY
+            Research Demo Notice (Not a Medical Tool)
           </div>
           <p className="text-amber-200/80 leading-relaxed">
-            Emotion estimation is implemented according to the simulation study methodology in the research paper.
-            Affective dimensional predictions (Valence and Arousal) are mathematical representations derived
-            from regularized spectral EEG correlates and do not constitute clinically validated diagnostic instruments.
+            Mood predictions here are math estimates used to test our research simulation. They are not clinically validated and should not be used for medical diagnosis.
           </p>
         </div>
       </div>
 
-      {/* Main Grid: Circumplex Plane + Ridge Regression Architecture */}
+      {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left: Circumplex Affect Graph (5 cols) */}
+        {/* Left: Mood Map (5 cols) */}
         <div className="lg:col-span-5 space-y-4">
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
             <h3 className="text-sm font-semibold text-white mb-1 flex items-center gap-2">
               <Brain className="w-4 h-4 text-cyan-400" />
-              Russell's Circumplex Affective Plane
+              2D Mood Map (Before vs. Now)
             </h3>
-            <p className="text-xs text-slate-400 mb-4 font-mono">
-              2D continuous affect coordinates: Valence × Arousal
+            <p className="text-xs text-slate-400 mb-4">
+              Left/Right = Sad to Happy · Up/Down = Tense to Calm
             </p>
 
             <EmotionCircumplex
@@ -80,64 +99,62 @@ export const EmotionDetectionTab: React.FC = () => {
               interactive={true}
             />
 
-            {/* Before vs After Session Comparison */}
-            <div className="mt-5 pt-4 border-t border-slate-800 grid grid-cols-2 gap-3 text-xs font-mono">
+            <div className="mt-5 pt-4 border-t border-slate-800 grid grid-cols-2 gap-3 text-xs">
               <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider">
-                  Session Initial State
+                <span className="text-[10px] text-slate-400 uppercase tracking-wider">
+                  Mood at Session Start
                 </span>
-                <div className="text-sm font-bold text-slate-200 mt-1">
-                  V: {state.initialEmotion.valence > 0 ? `+${state.initialEmotion.valence}` : state.initialEmotion.valence} · A: {state.initialEmotion.arousal > 0 ? `+${state.initialEmotion.arousal}` : state.initialEmotion.arousal}
+                <div className="text-sm font-mono font-bold text-slate-200 mt-1 tabular-nums">
+                  M: {state.initialEmotion.valence > 0 ? `+${state.initialEmotion.valence}` : state.initialEmotion.valence} · E: {state.initialEmotion.arousal > 0 ? `+${state.initialEmotion.arousal}` : state.initialEmotion.arousal}
                 </div>
                 <div className="text-[11px] text-slate-400 mt-0.5">
-                  {state.initialEmotion.quadrant}
+                  {friendlyQuadrant(state.initialEmotion.quadrant)}
                 </div>
               </div>
 
               <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider">
-                  Current Predicted State
+                <span className="text-[10px] text-slate-400 uppercase tracking-wider">
+                  Mood Right Now
                 </span>
-                <div className="text-sm font-bold text-cyan-400 mt-1">
-                  V: {state.currentEmotion.valence > 0 ? `+${state.currentEmotion.valence}` : state.currentEmotion.valence} · A: {state.currentEmotion.arousal > 0 ? `+${state.currentEmotion.arousal}` : state.currentEmotion.arousal}
+                <div className="text-sm font-mono font-bold text-cyan-400 mt-1 tabular-nums">
+                  M: {state.currentEmotion.valence > 0 ? `+${state.currentEmotion.valence}` : state.currentEmotion.valence} · E: {state.currentEmotion.arousal > 0 ? `+${state.currentEmotion.arousal}` : state.currentEmotion.arousal}
                 </div>
                 <div className="text-[11px] text-slate-300 mt-0.5">
-                  {state.currentEmotion.quadrant}
+                  {friendlyQuadrant(state.currentEmotion.quadrant)}
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right: Ridge Regression Encoder Architecture & Test Metrics (7 cols) */}
+        {/* Right: Translator Details & Accuracy (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
-          {/* Mathematical Formulation & Regularization Tuning */}
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-semibold text-white flex items-center gap-2">
                 <Layers className="w-4 h-4 text-cyan-400" />
-                Ridge Regression EEG Affective Decoder
+                Brainwave-to-Mood Translator (Ridge Regression)
               </h3>
-              <span className="text-xs font-mono text-cyan-400">λ = {lambda.toFixed(2)}</span>
+              <span className="text-xs font-mono text-cyan-400">Smoothness λ = {lambda.toFixed(1)}</span>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-slate-300 mb-4 leading-relaxed">
-              <div className="text-slate-500 text-[10px] uppercase">Closed-Form Analytical Solution</div>
-              <div className="text-cyan-300 mt-1 font-semibold">
-                W* = (X^T · X + λ · I)^(-1) · X^T · Y
-              </div>
-              <div className="text-slate-400 text-[11px] mt-1">
-                Linear mapping from 11D normalized spectral features with L2 penalty, squashed by hyperbolic tangent.
+            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 mb-4 leading-relaxed">
+              <div className="text-slate-400 text-[11px] font-semibold mb-1">How the Math Works Simply:</div>
+              <p className="text-slate-300">
+                Think of this like a weighted recipe. It multiplies each of the 11 brainwave readings by a learned weight to guess Mood and Energy.
+                The <span className="font-mono text-cyan-300">λ</span> slider keeps the weights gentle so noisy brainwaves don't cause wild guesses.
+              </p>
+              <div className="text-cyan-300/90 mt-2 font-mono text-[11px]">
+                Paper Formula: W* = (X^T · X + λ · I)^(-1) · X^T · Y
               </div>
             </div>
 
-            {/* Lambda Slider */}
             <div className="mb-4">
-              <div className="flex items-center justify-between text-xs font-mono mb-1.5">
+              <div className="flex items-center justify-between text-xs mb-1.5">
                 <span className="text-slate-300">
-                  L2 Regularization Parameter (λ): <strong className="text-cyan-400">{lambda.toFixed(2)}</strong>
+                  Noise Protection Strength (λ): <strong className="text-cyan-400 font-mono">{lambda.toFixed(1)}</strong>
                 </span>
-                <span className="text-slate-500">Default: 1.0</span>
+                <span className="text-slate-400 text-[11px]">Paper default: 1.0</span>
               </div>
               <input
                 type="range"
@@ -148,93 +165,88 @@ export const EmotionDetectionTab: React.FC = () => {
                 onChange={handleLambdaChange}
                 className="w-full accent-cyan-400 cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
-                <span>0.1 (Unregularized / OLS limit)</span>
-                <span>1.0 (Optimal Generalization)</span>
-                <span>10.0 (High Shrinkage)</span>
+              <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                <span>0.1 (More Reactive)</span>
+                <span>1.0 (Balanced Best)</span>
+                <span>10.0 (Very Cautious)</span>
               </div>
             </div>
 
-            {/* Test Partition Validation Metrics (Ground Truth) */}
+            {/* Paper Encoder Test Scores */}
             <div className="pt-4 border-t border-slate-800">
-              <div className="text-xs font-mono uppercase tracking-wider text-slate-400 mb-3">
-                Held-Out Synthetic Encoder Evaluation (2,400 calibration samples · RMSE = {modelSummary.testMetrics.encoderRmse})
+              <div className="text-xs font-medium text-slate-300 mb-3">
+                Accuracy on Test Brainwaves (2,400 samples · exact paper test results)
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-mono text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
                 <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-                  <div className="text-[10px] text-slate-500">QUADRANT ACC.</div>
-                  <div className="text-base font-bold text-emerald-400 mt-0.5">
+                  <div className="text-[10px] text-slate-400">RIGHT MOOD AREA</div>
+                  <div className="text-base font-mono font-bold text-emerald-400 mt-0.5 tabular-nums">
                     {(modelSummary.testMetrics.classificationAccuracy * 100).toFixed(1)}%
                   </div>
-                  <div className="text-[10px] text-slate-400">Sign of (V, A)</div>
+                  <div className="text-[10px] text-slate-400">4-box accuracy</div>
                 </div>
 
                 <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-                  <div className="text-[10px] text-slate-500">ENCODER RMSE</div>
-                  <div className="text-base font-bold text-cyan-400 mt-0.5">
+                  <div className="text-[10px] text-slate-400">AVERAGE ERROR</div>
+                  <div className="text-base font-mono font-bold text-cyan-400 mt-0.5 tabular-nums">
                     {modelSummary.testMetrics.encoderRmse}
                   </div>
-                  <div className="text-[10px] text-slate-400">z vs true s</div>
+                  <div className="text-[10px] text-slate-400">RMSE (lower = better)</div>
                 </div>
 
                 <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-                  <div className="text-[10px] text-slate-500">PRECISION</div>
-                  <div className="text-base font-bold text-slate-200 mt-0.5">
+                  <div className="text-[10px] text-slate-400">PRECISION</div>
+                  <div className="text-base font-mono font-bold text-slate-200 mt-0.5 tabular-nums">
                     {(modelSummary.testMetrics.precision * 100).toFixed(1)}%
                   </div>
-                  <div className="text-[10px] text-slate-400">Macro avg</div>
+                  <div className="text-[10px] text-slate-400">Average match</div>
                 </div>
 
                 <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-                  <div className="text-[10px] text-slate-500">F1-SCORE</div>
-                  <div className="text-base font-bold text-slate-200 mt-0.5">
+                  <div className="text-[10px] text-slate-400">F1-SCORE</div>
+                  <div className="text-base font-mono font-bold text-slate-200 mt-0.5 tabular-nums">
                     {(modelSummary.testMetrics.f1Score * 100).toFixed(1)}%
                   </div>
-                  <div className="text-[10px] text-slate-400">4-Quadrant</div>
+                  <div className="text-[10px] text-slate-400">Overall balance</div>
                 </div>
-              </div>
-
-              <div className="mt-3 flex items-center justify-between text-xs font-mono text-slate-400 px-1">
-                <span>Valence: R² = {modelSummary.testMetrics.valenceR2} (MSE = {modelSummary.testMetrics.valenceMse})</span>
-                <span>Arousal: R² = {modelSummary.testMetrics.arousalR2} (MSE = {modelSummary.testMetrics.arousalMse})</span>
               </div>
             </div>
           </div>
 
-          {/* Model Weights Inspector */}
+          {/* Learned Feature Weights Table */}
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
-            <h4 className="text-sm font-semibold text-white mb-2">
-              Feature Coefficient Loading Matrix (W)
+            <h4 className="text-sm font-semibold text-white mb-1">
+              Which Brainwaves Matter Most?
             </h4>
             <p className="text-xs text-slate-400 mb-3">
-              Standardized regression weights for each spectral feature across emotional dimensions
+              Green/positive numbers push Mood or Energy up; negative numbers pull them down.
             </p>
 
             <div className="overflow-x-auto max-h-56 scrollbar-thin">
-              <table className="w-full text-left text-xs font-mono">
+              <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-slate-800 text-slate-400 text-[10px] uppercase">
-                    <th className="py-1.5 px-2">Feature</th>
-                    <th className="py-1.5 px-2 text-right">Valence W_v</th>
-                    <th className="py-1.5 px-2 text-right">Arousal W_a</th>
+                    <th className="py-1.5 px-2">Brainwave Reading</th>
+                    <th className="py-1.5 px-2 text-right">Mood Effect</th>
+                    <th className="py-1.5 px-2 text-right">Energy Effect</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-slate-800/60 font-mono">
                   {featureLabels.map((lbl, idx) => {
                     const wv = modelSummary.weightsValence[idx];
                     const wa = modelSummary.weightsArousal[idx];
                     return (
                       <tr key={idx} className="hover:bg-slate-800/30">
-                        <td className="py-1 px-2 text-slate-300">{lbl}</td>
+                        <td className="py-1.5 px-2 text-slate-300 font-sans">{lbl}</td>
                         <td
-                          className={`py-1 px-2 text-right font-bold ${
+                          className={`py-1.5 px-2 text-right font-bold tabular-nums ${
                             wv > 0 ? 'text-emerald-400' : 'text-rose-400'
                           }`}
                         >
                           {wv > 0 ? `+${wv.toFixed(2)}` : wv.toFixed(2)}
                         </td>
                         <td
-                          className={`py-1 px-2 text-right font-bold ${
+                          className={`py-1.5 px-2 text-right font-bold tabular-nums ${
                             wa > 0 ? 'text-amber-400' : 'text-indigo-400'
                           }`}
                         >

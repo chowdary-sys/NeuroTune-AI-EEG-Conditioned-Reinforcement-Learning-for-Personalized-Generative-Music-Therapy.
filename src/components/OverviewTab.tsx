@@ -1,14 +1,12 @@
 import React from 'react';
 import {
-  Activity,
   ArrowRight,
   Brain,
   CheckCircle2,
   Disc,
   Play,
-  RotateCcw,
   Sliders,
-  Sparkles,
+  User,
   Volume2,
 } from 'lucide-react';
 import { ClosedLoopState, defaultClosedLoopController } from '../services/closedLoopController';
@@ -21,106 +19,178 @@ interface OverviewTabProps {
   state: ClosedLoopState;
   onNavigateTab: (tab: NavTab) => void;
   onOpenDocsModal: () => void;
+  onOpenProfileModal: () => void;
 }
 
 export const OverviewTab: React.FC<OverviewTabProps> = ({
   state,
   onNavigateTab,
   onOpenDocsModal,
+  onOpenProfileModal,
 }) => {
   const { currentEmotion, targetEmotion, currentAction, profile, isRunning } = state;
   const isAudioPlaying = defaultAudioEngine.getPlaybackState().isPlaying;
 
   const stages = [
-    { num: 1, label: 'EEG Acquisition', desc: '3 leads (F3, F4, Pz)' },
-    { num: 2, label: 'Preprocessing', desc: '0.5-45Hz Biquad + Welch PSD' },
-    { num: 3, label: 'Emotion Estimation', desc: 'Ridge Regression (V, A)' },
-    { num: 4, label: 'RL Policy Gradient', desc: 'REINFORCE Action Sampling' },
-    { num: 5, label: 'Music Generation', desc: 'Web Audio Harmonic Engine' },
-    { num: 6, label: 'Playback & Stimulus', desc: 'Acoustic Entrainment' },
-    { num: 7, label: 'Listener Feedback', desc: 'Subjective Response Proxy' },
-    { num: 8, label: 'Policy Update', desc: '∇_θ J(θ) Advantage Update' },
-    { num: 9, label: 'Next EEG Window', desc: 'Physiological Adaptation' },
+    { num: 1, key: 'eeg_acquisition', label: 'Read Brainwaves', desc: '3 brain sensors (F3, F4, Pz)' },
+    { num: 2, key: 'preprocessing', label: 'Clean Noise', desc: 'Keep useful wave speeds' },
+    { num: 3, key: 'emotion_estimation', label: 'Guess Mood', desc: 'Map waves to Mood & Energy' },
+    { num: 4, key: 'rl_decision', label: 'AI Picks Music', desc: 'Choose best speed & feel' },
+    { num: 5, key: 'music_generation', label: 'Create Sound', desc: 'Build live chords & notes' },
+    { num: 6, key: 'playback', label: 'Play Music', desc: 'Listener hears calming audio' },
+    { num: 7, key: 'listener_feedback', label: 'Check Feeling', desc: 'See if mood improved' },
+    { num: 8, key: 'policy_update', label: 'AI Learns', desc: 'Reward what worked well' },
+    { num: 9, key: 'idle', label: 'Repeat Cycle', desc: 'Read next brainwave window' },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Hero Research Citation & System Banner */}
+      {/* Hero Banner in Simple English */}
       <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 lg:p-8">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-3xl">
+          <div className="space-y-2.5 max-w-3xl">
             <div className="flex items-center gap-2 text-xs font-mono text-cyan-400">
-              <span>RESEARCH IMPLEMENTATION</span>
+              <span>SMART MUSIC THERAPY DEMO</span>
               <span>·</span>
-              <span>CLOSED-LOOP AFFECTIVE COMPUTING</span>
+              <span>BRAINWAVES + SELF-LEARNING AI</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white text-balance">
-              EEG-Conditioned Reinforcement Learning for Personalized Generative Music Therapy
+              Smart Music Therapy That Listens to Your Brainwaves
             </h1>
             <p className="text-sm text-slate-300 leading-relaxed">
-              An intelligent closed-loop framework that continuously decodes neural affective states
-              (Valence and Arousal) via regularized EEG ridge regression and optimizes personalized
-              generative music parameters in real time via REINFORCE policy gradient.
+              Instead of playing the same fixed playlist for everyone, NeuroTune AI reads simulated
+              brainwaves, guesses how the listener feels right now, and adjusts the music speed,
+              mood, and fullness in real time to gently guide them toward a calm, happy goal.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5 shrink-0">
             <button
               onClick={() => defaultClosedLoopController.executeSingleStep()}
-              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-xl text-xs font-semibold border border-slate-700 flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-xl text-xs font-semibold border border-slate-700 flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
             >
               <Play className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Step Single Iteration</span>
+              <span>Try 1 Step</span>
             </button>
             <button
               onClick={() => {
                 if (isRunning) defaultClosedLoopController.stopContinuousLoop();
                 else defaultClosedLoopController.startContinuousLoop(2500);
               }}
-              className={`px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer ${
+              className={`px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap ${
                 isRunning
                   ? 'bg-rose-600 hover:bg-rose-500 text-white'
                   : 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold'
               }`}
             >
               <Disc className={`w-3.5 h-3.5 ${isRunning ? 'animate-spin' : ''}`} />
-              <span>{isRunning ? 'Halt Continuous Loop' : 'Start Continuous Loop'}</span>
+              <span>{isRunning ? 'Pause Live Therapy' : 'Start Live Therapy'}</span>
             </button>
             <button
               onClick={onOpenDocsModal}
-              className="px-4 py-2 text-slate-400 hover:text-slate-200 text-xs font-mono text-center transition-colors cursor-pointer"
+              className="px-4 py-2 text-slate-400 hover:text-slate-200 text-xs font-medium text-center transition-colors cursor-pointer"
             >
-              Inspect Paper Specs →
+              Read Simple Paper Guide →
             </button>
           </div>
         </div>
       </div>
 
-      {/* 9-Stage Closed-Loop Architecture Visualization */}
+      {/* Quick Start 3-Step Guide for New Users */}
+      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+          <div>
+            <h2 className="text-sm font-semibold text-white">
+              New Here? How to Use This Website in 3 Easy Steps
+            </h2>
+            <p className="text-xs text-slate-400">
+              Follow these three quick actions to see the entire brainwave-to-music system work live.
+            </p>
+          </div>
+          <button
+            onClick={() => onNavigateTab('benchmarks')}
+            className="text-xs text-cyan-400 hover:text-cyan-300 font-medium flex items-center gap-1 cursor-pointer whitespace-nowrap"
+          >
+            <span>See Research Paper Results</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col justify-between gap-3">
+            <div>
+              <div className="text-xs font-mono font-bold text-cyan-400 mb-1">STEP 1 · PICK LISTENER</div>
+              <div className="text-sm font-semibold text-white">Choose Who Is Listening</div>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Pick a preset listener (like Anxious or Low Energy) or click anywhere on the Mood Map below to move the green Calm Goal.
+              </p>
+            </div>
+            <button
+              onClick={onOpenProfileModal}
+              className="w-fit px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 flex items-center gap-1.5 cursor-pointer"
+            >
+              <User className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Pick Listener Profile</span>
+            </button>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col justify-between gap-3">
+            <div>
+              <div className="text-xs font-mono font-bold text-emerald-400 mb-1">STEP 2 · RUN & LISTEN</div>
+              <div className="text-sm font-semibold text-white">Start the Live Music Loop</div>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Press "Start Live Therapy" (or "Try 1 Step"). Sound turns on automatically and the AI adjusts the music every few seconds.
+              </p>
+            </div>
+            <button
+              onClick={() => defaultClosedLoopController.executeSingleStep()}
+              className="w-fit px-3 py-1.5 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 text-xs font-medium text-cyan-300 border border-cyan-500/30 flex items-center gap-1.5 cursor-pointer"
+            >
+              <Play className="w-3.5 h-3.5" />
+              <span>Run 1 Step Now</span>
+            </button>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col justify-between gap-3">
+            <div>
+              <div className="text-xs font-mono font-bold text-amber-400 mb-1">STEP 3 · SEE THE RESULT</div>
+              <div className="text-sm font-semibold text-white">Watch the Blue Dot Reach Calm</div>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Watch the blue dot move into the green Calm Goal circle (distance ≤ 0.30). After 10 steps, your session saves automatically.
+              </p>
+            </div>
+            <button
+              onClick={() => onNavigateTab('closed_loop')}
+              className="w-fit px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 flex items-center gap-1.5 cursor-pointer"
+            >
+              <Sliders className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Open Live Loop & Rate Music</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 9-Stage Cycle Explained Simply */}
       <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-base font-semibold text-white">Closed-Loop Neuro-Feedback Pipeline</h3>
+            <h3 className="text-base font-semibold text-white">How Each 3-Second Therapy Loop Works</h3>
             <p className="text-xs text-slate-400">
-              Real-time continuous 9-stage cycle mapping neural rhythms to generative music actions
+              Every step goes through these 9 simple stages—from reading brainwaves to playing better music
             </p>
           </div>
           <button
             onClick={() => onNavigateTab('closed_loop')}
-            className="text-xs text-cyan-400 hover:text-cyan-300 font-mono flex items-center gap-1 cursor-pointer"
+            className="text-xs text-cyan-400 hover:text-cyan-300 font-medium flex items-center gap-1 cursor-pointer whitespace-nowrap"
           >
-            <span>Live Stage Inspector</span>
+            <span>Open Live Loop Controls</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-9 gap-2">
           {stages.map((stage) => {
-            const isCurrent =
-              state.currentStage.toLowerCase().includes(stage.label.toLowerCase().slice(0, 4)) ||
-              (state.currentStage === 'policy_update' && stage.num === 8) ||
-              (state.currentStage === 'music_generation' && stage.num === 5);
-
+            const isCurrent = state.currentStage === stage.key;
             return (
               <div
                 key={stage.num}
@@ -132,9 +202,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
               >
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] font-mono text-slate-500">0{stage.num}</span>
-                  {isCurrent && (
-                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                  )}
+                  {isCurrent && <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>}
                 </div>
                 <div>
                   <div className="text-xs font-semibold text-slate-200 leading-tight">
@@ -150,25 +218,25 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
         </div>
       </div>
 
-      {/* Main 2-Column Split: Affect Circumplex & Music Synthesizer */}
+      {/* Main 2-Column Split: Mood Map & Music Player */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: Emotion Circumplex & Patient Profile (5 cols) */}
+        {/* Left Column: Mood Map & Listener Profile (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-2">
               <h3 className="text-base font-semibold text-white flex items-center gap-2">
                 <Brain className="w-4 h-4 text-cyan-400" />
-                Affective Trajectory Plane
+                Live Mood Map
               </h3>
               <button
                 onClick={() => onNavigateTab('emotion')}
-                className="text-xs text-slate-400 hover:text-cyan-400 font-mono"
+                className="text-xs text-slate-400 hover:text-cyan-400 font-medium cursor-pointer"
               >
-                Details →
+                More Details →
               </button>
             </div>
             <p className="text-xs text-slate-400 mb-4">
-              Russell's Circumplex Model: current patient affect versus therapeutic target goal.
+              Shows where the listener feels right now (blue dot) and the Calm Goal (green circle).
             </p>
 
             <EmotionCircumplex
@@ -185,62 +253,66 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
 
             <div className="mt-4 pt-4 border-t border-slate-800/80 grid grid-cols-2 gap-3 text-xs font-mono">
               <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-                <div className="text-slate-400 text-[10px]">INITIAL STATE</div>
-                <div className="text-slate-200 mt-0.5">
-                  V: {state.initialEmotion.valence.toFixed(2)} · A: {state.initialEmotion.arousal.toFixed(2)}
+                <div className="text-slate-400 text-[10px]">STARTED AT</div>
+                <div className="text-slate-200 mt-0.5 tabular-nums">
+                  Mood: {state.initialEmotion.valence.toFixed(2)} · Energy: {state.initialEmotion.arousal.toFixed(2)}
                 </div>
               </div>
               <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-                <div className="text-slate-400 text-[10px]">CURRENT DISTANCE</div>
-                <div className="text-emerald-400 mt-0.5 font-bold">
-                  {state.distanceToTarget} <span className="text-[10px] text-slate-500">(d_T ≤ 0.30)</span>
+                <div className="text-slate-400 text-[10px]">DISTANCE TO GOAL</div>
+                <div className="text-emerald-400 mt-0.5 font-bold tabular-nums">
+                  {state.distanceToTarget.toFixed(2)} <span className="text-[10px] text-slate-500">(goal ≤ 0.30)</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Active Profile Summary */}
+          {/* Active Listener Card */}
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
-                Clinical Subject Profile
+              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+                Current Listener
               </span>
-              <span className="text-xs font-mono text-cyan-400">{profile.role}</span>
+              <button
+                onClick={onOpenProfileModal}
+                className="text-xs text-cyan-400 hover:text-cyan-300 cursor-pointer"
+              >
+                Switch Person →
+              </button>
             </div>
             <h4 className="text-base font-semibold text-white">{profile.name}</h4>
-            <div className="mt-3 space-y-1.5 text-xs text-slate-300 font-mono">
+            <div className="mt-3 space-y-1.5 text-xs text-slate-300">
               <div className="flex justify-between">
-                <span className="text-slate-500">Target Emotion:</span>
-                <span className="text-emerald-400">{profile.targetEmotion.label}</span>
+                <span className="text-slate-400">Mood Goal:</span>
+                <span className="text-emerald-400 font-medium">{profile.targetEmotion.label}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Preferred Tempo:</span>
-                <span>{profile.preferredTempoRange[0]} - {profile.preferredTempoRange[1]} BPM</span>
+                <span className="text-slate-400">Favorite Speed:</span>
+                <span className="font-mono">{profile.preferredTempoRange[0]}–{profile.preferredTempoRange[1]} BPM</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Heterogeneity Factor:</span>
-                <span>h = {profile.heterogeneityFactor}</span>
+                <span className="text-slate-400">Personal Taste Difference:</span>
+                <span className="font-mono">h = {profile.heterogeneityFactor}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">EEG Noise Level:</span>
-                <span>σ = {profile.noiseLevel}</span>
+                <span className="text-slate-400">Brainwave Signal Noise:</span>
+                <span className="font-mono">σ = {profile.noiseLevel}</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Column: Generative Music & RL State (7 cols) */}
+        {/* Right Column: Live Music Player & Paper Proof (7 cols) */}
         <div className="lg:col-span-7 space-y-6">
-          {/* Active Generative Synthesizer Console */}
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-base font-semibold text-white flex items-center gap-2">
                   <Volume2 className="w-4 h-4 text-cyan-400" />
-                  Procedural Music Generation Engine
+                  Live AI Music Player
                 </h3>
                 <p className="text-xs text-slate-400">
-                  Web Audio API synthesizer steered in real time by RL policy actions
+                  Real sound generated in your browser and adjusted automatically by the AI
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -249,139 +321,147 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
                     if (isAudioPlaying) defaultAudioEngine.pause();
                     else defaultAudioEngine.play();
                   }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                     isAudioPlaying
                       ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                       : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                   }`}
                 >
                   <Disc className={`w-3.5 h-3.5 ${isAudioPlaying ? 'animate-spin' : ''}`} />
-                  <span>{isAudioPlaying ? 'Pause Audio' : 'Play Synthesizer'}</span>
+                  <span>{isAudioPlaying ? 'Pause Music' : 'Listen to Music'}</span>
                 </button>
               </div>
             </div>
 
-            {/* Live Audio Visualizer Canvas */}
             <div className="mb-4">
               <AudioVisualizer height={100} />
             </div>
 
-            {/* Musical Action Parameters */}
             <div className="grid grid-cols-3 gap-3 mb-4">
               <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
-                  Tempo
+                <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
+                  Music Speed
                 </span>
-                <div className="text-xl font-mono font-bold text-cyan-400 mt-1">
+                <div className="text-xl font-mono font-bold text-cyan-400 mt-1 tabular-nums">
                   {currentAction.tempo} <span className="text-xs text-slate-500">BPM</span>
                 </div>
-                <div className="text-[11px] text-slate-400 mt-0.5">Gaussian Policy μ(s)</div>
+                <div className="text-[11px] text-slate-400 mt-0.5">
+                  {currentAction.tempo < 75 ? 'Slow & calming' : currentAction.tempo < 105 ? 'Gentle pace' : 'Energetic beat'}
+                </div>
               </div>
 
               <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
-                  Musical Mode
+                <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
+                  Musical Feel
                 </span>
                 <div className="text-xl font-mono font-bold text-indigo-400 mt-1 capitalize">
                   {currentAction.mode}
                 </div>
                 <div className="text-[11px] text-slate-400 mt-0.5">
-                  {currentAction.mode === 'major' ? 'Valence Elevation' : 'Introspective'}
+                  {currentAction.mode === 'major' ? 'Bright & uplifting' : 'Soft & thoughtful'}
                 </div>
               </div>
 
               <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
-                  Note Density
+                <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
+                  Note Busyness
                 </span>
                 <div className="text-xl font-mono font-bold text-emerald-400 mt-1 capitalize">
                   {currentAction.density}
                 </div>
                 <div className="text-[11px] text-slate-400 mt-0.5">
                   {currentAction.density === 'sparse'
-                    ? 'Sedative 1/2 notes'
+                    ? 'Long, peaceful notes'
                     : currentAction.density === 'medium'
-                    ? 'Rhythmic 1/4 notes'
-                    : 'Stimulating 1/8 notes'}
+                    ? 'Balanced melody'
+                    : 'Fast, flowing notes'}
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-800 font-mono">
-              <span>Acoustic Chord: C - G - Am - F progression</span>
+            <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-800">
+              <span>Live chords: soothing C – G – Am – F progression</span>
               <button
                 onClick={() => onNavigateTab('music')}
-                className="text-cyan-400 hover:text-cyan-300 cursor-pointer"
+                className="text-cyan-400 hover:text-cyan-300 cursor-pointer font-medium"
               >
-                Synthesizer Controls →
+                Adjust Music Manually →
               </button>
             </div>
           </div>
 
-          {/* Subsystem Readiness Matrix */}
+          {/* What the System Gets Right (Research Results Summary) */}
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
-            <h3 className="text-base font-semibold text-white mb-4">
-              Experimental Subsystem Verification
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-semibold text-white">
+                Key Numbers From Our Research Study
+              </h3>
+              <button
+                onClick={() => onNavigateTab('benchmarks')}
+                className="text-xs text-cyan-400 hover:text-cyan-300 cursor-pointer font-medium"
+              >
+                Full Paper Tables →
+              </button>
+            </div>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800/80">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800/80 gap-3">
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                   <div>
                     <div className="text-xs font-semibold text-slate-200">
-                      3-Lead Preprocessing Engine (F3, F4, Pz)
+                      1. Cleans Brainwave Signals (3 Sensors: F3, F4, Pz)
                     </div>
                     <div className="text-[11px] text-slate-400">
-                      Butterworth IIR bandpass (0.5-45 Hz), Welch periodogram PSD, FAA extraction
+                      Removes background static and measures Theta, Alpha, and Beta wave energy
                     </div>
                   </div>
                 </div>
-                <span className="text-xs font-mono text-emerald-400">98.5% SNR</span>
+                <span className="text-xs font-mono text-emerald-400 shrink-0">98.5% Clean</span>
               </div>
 
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800/80">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800/80 gap-3">
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                   <div>
                     <div className="text-xs font-semibold text-slate-200">
-                      Ridge Regression Affective Decoder
+                      2. Predicts Mood From Brainwaves (Ridge Regression)
                     </div>
                     <div className="text-[11px] text-slate-400">
-                      Regularized mapping (λ = 1.0) with Russell circumplex classification
+                      Correctly identifies the listener's mood area 85.1% of the time in tests
                     </div>
                   </div>
                 </div>
-                <span className="text-xs font-mono text-cyan-400">85.1% Acc · RMSE 0.194</span>
+                <span className="text-xs font-mono text-cyan-400 shrink-0">85.1% Acc · RMSE 0.194</span>
               </div>
 
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800/80">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800/80 gap-3">
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                   <div>
                     <div className="text-xs font-semibold text-slate-200">
-                      REINFORCE Policy Gradient Optimizer
+                      3. Learns Personalized Music (REINFORCE AI)
                     </div>
                     <div className="text-[11px] text-slate-400">
-                      Adam LR = 0.02, per-step batch baseline, γ = 0.9, λ_q = 0.5
+                      Keeps music smooth and pleasant while adjusting tempo and mood to the listener
                     </div>
                   </div>
                 </div>
-                <span className="text-xs font-mono text-indigo-400">Q_avg = 0.938</span>
+                <span className="text-xs font-mono text-indigo-400 shrink-0">Quality = 0.938</span>
               </div>
 
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800/80">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800/80 gap-3">
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                   <div>
                     <div className="text-xs font-semibold text-slate-200">
-                      Simulation Benchmark Framework (Table 3)
+                      4. Reaches the Calm Goal Faster Than Fixed Playlists
                     </div>
                     <div className="text-[11px] text-slate-400">
-                      512 train / 1,000 test listeners, 300 iterations, seeds 0–4, 5 baselines
+                      Tested on 1,000 simulated listeners across 5 runs (60.3% vs 36.1% for fixed playlists)
                     </div>
                   </div>
                 </div>
-                <span className="text-xs font-mono text-emerald-400">d_T = 0.272 · 60.3%</span>
+                <span className="text-xs font-mono text-emerald-400 shrink-0">d_T = 0.272 · 60.3%</span>
               </div>
             </div>
           </div>

@@ -17,15 +17,13 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
   interactive = true,
 }) => {
   const size = 380;
-  const padding = 40;
+  const padding = 42;
   const plotWidth = size - 2 * padding;
   const plotHeight = size - 2 * padding;
 
-  // Convert (valence, arousal) in [-1, 1] to SVG coordinates
   const toSvgX = (v: number) => padding + ((v + 1) / 2) * plotWidth;
-  const toSvgY = (a: number) => padding + ((1 - a) / 2) * plotHeight; // Invert Y for Cartesian coordinates
+  const toSvgY = (a: number) => padding + ((1 - a) / 2) * plotHeight;
 
-  // Convert SVG coordinate back to (v, a)
   const handleSvgClick = (e: React.MouseEvent<SVGSVGElement>) => {
     if (!interactive || !onSelectTarget) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -46,27 +44,39 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
 
   const targetX = toSvgX(targetEmotion.valence);
   const targetY = toSvgY(targetEmotion.arousal);
-  const targetRadius = (0.30 / 2) * plotWidth; // d_T <= 0.3 success boundary (Section 5.4)
+  const targetRadius = (0.30 / 2) * plotWidth;
+
+  const friendlyQuadrant = (q: string) => {
+    switch (q) {
+      case 'Anxious/Tense':
+        return 'Stressed / Tense';
+      case 'Excited/Joyful':
+        return 'Happy / Excited';
+      case 'Depressed/Sad':
+        return 'Sad / Tired';
+      case 'Serene/Calm':
+        return 'Calm / Relaxed';
+      default:
+        return q;
+    }
+  };
 
   return (
     <div className="flex flex-col items-center">
-      <div className="relative border border-slate-800 rounded-xl bg-slate-950 p-2 shadow-inner">
+      <div className="relative border border-slate-800 rounded-xl bg-slate-950 p-2 shadow-inner w-full max-w-[380px]">
         <svg
-          width={size}
-          height={size}
+          viewBox={`0 0 ${size} ${size}`}
           onClick={handleSvgClick}
-          className={`${interactive ? 'cursor-crosshair' : 'cursor-default'} select-none`}
+          className={`w-full h-auto ${interactive ? 'cursor-crosshair' : 'cursor-default'} select-none`}
         >
           {/* Subtle Quadrant Background Tints */}
-          {/* Q2: Anxious / Tense (-V, +A) */}
           <rect
             x={padding}
             y={padding}
             width={plotWidth / 2}
             height={plotHeight / 2}
-            fill="rgba(244, 63, 94, 0.04)"
+            fill="rgba(244, 63, 94, 0.05)"
           />
-          {/* Q1: Excited / Joyful (+V, +A) */}
           <rect
             x={padding + plotWidth / 2}
             y={padding}
@@ -74,7 +84,6 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             height={plotHeight / 2}
             fill="rgba(245, 158, 11, 0.04)"
           />
-          {/* Q3: Depressed / Sad (-V, -A) */}
           <rect
             x={padding}
             y={padding + plotHeight / 2}
@@ -82,13 +91,12 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             height={plotHeight / 2}
             fill="rgba(99, 102, 241, 0.04)"
           />
-          {/* Q4: Serene / Calm (+V, -A) */}
           <rect
             x={padding + plotWidth / 2}
             y={padding + plotHeight / 2}
             width={plotWidth / 2}
             height={plotHeight / 2}
-            fill="rgba(16, 185, 129, 0.05)"
+            fill="rgba(16, 185, 129, 0.06)"
           />
 
           {/* Grid lines */}
@@ -127,78 +135,78 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             strokeDasharray="4 4"
           />
 
-          {/* Quadrant Labels */}
+          {/* Friendly Quadrant Labels */}
           <text
-            x={padding + 12}
-            y={padding + 22}
-            className="text-[11px] font-mono fill-rose-400/80 font-medium tracking-wide"
+            x={padding + 10}
+            y={padding + 20}
+            className="text-[11px] font-mono fill-rose-400/90 font-semibold tracking-wide"
           >
-            ANXIOUS / TENSE
+            STRESSED / TENSE
           </text>
           <text
-            x={padding + plotWidth - 12}
-            y={padding + 22}
+            x={padding + plotWidth - 10}
+            y={padding + 20}
             textAnchor="end"
-            className="text-[11px] font-mono fill-amber-400/80 font-medium tracking-wide"
+            className="text-[11px] font-mono fill-amber-400/90 font-semibold tracking-wide"
           >
-            EXCITED / FLOW
+            HAPPY / EXCITED
           </text>
           <text
-            x={padding + 12}
-            y={padding + plotHeight - 14}
-            className="text-[11px] font-mono fill-indigo-400/80 font-medium tracking-wide"
+            x={padding + 10}
+            y={padding + plotHeight - 12}
+            className="text-[11px] font-mono fill-indigo-400/90 font-semibold tracking-wide"
           >
-            DYSPHORIC / FATIGUE
+            SAD / TIRED
           </text>
           <text
-            x={padding + plotWidth - 12}
-            y={padding + plotHeight - 14}
+            x={padding + plotWidth - 10}
+            y={padding + plotHeight - 12}
             textAnchor="end"
-            className="text-[11px] font-mono fill-emerald-400/80 font-medium tracking-wide"
+            className="text-[11px] font-mono fill-emerald-400/90 font-semibold tracking-wide"
           >
-            SERENE / CALM
+            CALM / RELAXED
           </text>
 
-          {/* Axis Labels */}
+          {/* Plain-English Axis Labels */}
           <text
             x={padding + plotWidth / 2}
             y={padding - 14}
             textAnchor="middle"
-            className="text-[10px] font-mono fill-slate-400 uppercase tracking-wider font-semibold"
+            className="text-[10px] font-mono fill-slate-300 uppercase tracking-wider font-semibold"
           >
-            + Arousal (Activation)
+            HIGH ENERGY / TENSE (+Arousal)
           </text>
           <text
             x={padding + plotWidth / 2}
             y={size - 12}
             textAnchor="middle"
-            className="text-[10px] font-mono fill-slate-400 uppercase tracking-wider font-semibold"
+            className="text-[10px] font-mono fill-slate-300 uppercase tracking-wider font-semibold"
           >
-            - Arousal (Sedation)
+            LOW ENERGY / CALM (-Arousal)
           </text>
           <text
-            x={padding - 8}
+            x={padding - 6}
             y={padding + plotHeight / 2 + 3}
             textAnchor="end"
-            className="text-[10px] font-mono fill-slate-400 uppercase tracking-wider font-semibold"
+            className="text-[10px] font-mono fill-slate-400 font-semibold"
           >
-            - Valence
+            - Mood
           </text>
           <text
-            x={padding + plotWidth + 8}
+            x={padding + plotWidth + 6}
             y={padding + plotHeight / 2 + 3}
             textAnchor="start"
-            className="text-[10px] font-mono fill-slate-400 uppercase tracking-wider font-semibold"
+            className="text-[10px] font-mono fill-slate-400 font-semibold"
           >
-            + Valence
+            + Mood
           </text>
 
-          {/* Target Epsilon Success Zone */}
+          {/* Target Success Zone */}
           <circle
             cx={targetX}
             cy={targetY}
             r={targetRadius}
-            fill="rgba(16, 185, 129, 0.12)"
+            fill="rgba(16, 185, 129, 0.14)"
             stroke="#10b981"
             strokeWidth="1.5"
             strokeDasharray="3 3"
@@ -208,11 +216,11 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
           <circle cx={targetX} cy={targetY} r={6} fill="#10b981" />
           <text
             x={targetX}
-            y={targetY - 10}
+            y={targetY - 11}
             textAnchor="middle"
             className="text-[10px] font-mono fill-emerald-400 font-bold"
           >
-            Target ({targetEmotion.valence > 0 ? `+${targetEmotion.valence}` : targetEmotion.valence}, {targetEmotion.arousal > 0 ? `+${targetEmotion.arousal}` : targetEmotion.arousal})
+            Calm Goal ({targetEmotion.valence > 0 ? `+${targetEmotion.valence}` : targetEmotion.valence}, {targetEmotion.arousal > 0 ? `+${targetEmotion.arousal}` : targetEmotion.arousal})
           </text>
 
           {/* Trajectory Polyline */}
@@ -240,7 +248,7 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             </g>
           )}
 
-          {/* Current State Confidence Ellipse */}
+          {/* Current State Pulse */}
           <circle
             cx={currX}
             cy={currY}
@@ -259,25 +267,27 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             textAnchor="middle"
             className="text-[10px] font-mono fill-sky-200 font-semibold"
           >
-            Current ({currentEmotion.valence > 0 ? `+${currentEmotion.valence}` : currentEmotion.valence}, {currentEmotion.arousal > 0 ? `+${currentEmotion.arousal}` : currentEmotion.arousal})
+            You Now ({currentEmotion.valence > 0 ? `+${currentEmotion.valence}` : currentEmotion.valence}, {currentEmotion.arousal > 0 ? `+${currentEmotion.arousal}` : currentEmotion.arousal})
           </text>
         </svg>
       </div>
 
-      <div className="mt-3 flex items-center justify-between w-full max-w-[380px] text-xs text-slate-400 font-mono">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 w-full max-w-[380px] text-xs text-slate-300">
         <span className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-full bg-sky-500 inline-block"></span>
-          <span>Estimated Affect: <strong className="text-slate-200">{currentEmotion.quadrant}</strong></span>
+          <span>
+            Blue dot = Now: <strong className="text-white">{friendlyQuadrant(currentEmotion.quadrant)}</strong>
+          </span>
         </span>
         <span className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
-          <span>Target Zone (d_T ≤ 0.30)</span>
+          <span>Green circle = Goal (d_T ≤ 0.30)</span>
         </span>
       </div>
 
       {interactive && (
-        <p className="text-[11px] text-slate-500 mt-1">
-          Click anywhere inside the circumplex coordinate plane to retarget the therapeutic goal.
+        <p className="text-[11px] text-slate-400 mt-1.5 text-center">
+          Tip: Click anywhere inside the map above to move your green Calm Goal.
         </p>
       )}
     </div>

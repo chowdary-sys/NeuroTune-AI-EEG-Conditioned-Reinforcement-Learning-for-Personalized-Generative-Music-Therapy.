@@ -73,6 +73,7 @@ export default function App() {
             state={loopState}
             onNavigateTab={setActiveTab}
             onOpenDocsModal={() => setIsDocsModalOpen(true)}
+            onOpenProfileModal={() => setIsProfileModalOpen(true)}
           />
         )}
 
@@ -91,18 +92,18 @@ export default function App() {
         {activeTab === 'history' && <SessionHistoryTab />}
       </main>
 
-      {/* Research Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950 py-5 text-xs text-slate-500 font-mono">
+      {/* Footer */}
+      <footer className="border-t border-slate-900 bg-slate-950 py-5 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div>
-            NeuroTune AI · "EEG-Conditioned Reinforcement Learning for Personalized Generative Music Therapy"
+            NeuroTune AI · Smart Music Therapy Powered by Brainwaves & Reinforcement Learning (Research Demo)
           </div>
-          <div className="flex items-center gap-4 text-[11px] text-slate-400">
-            <span>Client Engine: Web Audio + TS + Recharts</span>
+          <div className="flex items-center gap-4 text-[11px] text-slate-400 font-mono">
+            <span>Live Browser Audio</span>
             <span>·</span>
-            <span>Backend: FastAPI + SciPy</span>
+            <span>Research Simulation Benchmark</span>
             <span>·</span>
-            <span>Simulated Cohort N=512</span>
+            <span>Not a Medical Device</span>
           </div>
         </div>
       </footer>

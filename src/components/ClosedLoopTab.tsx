@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import {
-  ArrowRight,
-  Brain,
-  CheckCircle,
-  ChevronRight,
   Disc,
+  Info,
   Play,
   RotateCcw,
-  Sparkles,
   Star,
-  Volume2,
 } from 'lucide-react';
 import { ClosedLoopState, defaultClosedLoopController } from '../services/closedLoopController';
-import { EmotionCircumplex } from './EmotionCircumplex';
 
 interface ClosedLoopTabProps {
   state: ClosedLoopState;
@@ -24,52 +18,27 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
   const [perceivedShift, setPerceivedShift] = useState<number>(1);
   const [speedMs, setSpeedMs] = useState<number>(3000);
 
+  const applyFeedback = (sat: number, qual: number, shift: number) => {
+    setSatisfaction(sat);
+    setPerceivedQuality(qual);
+    setPerceivedShift(shift);
+    defaultClosedLoopController.setUserFeedbackOverride({
+      satisfaction: sat,
+      perceivedQuality: qual,
+      perceivedShift: shift,
+    });
+  };
+
   const loopStages = [
-    {
-      id: 'eeg_acquisition',
-      title: '1. EEG Acquisition',
-      desc: 'Acquire 128 raw samples across F3, F4, Pz leads at 128 Hz.',
-    },
-    {
-      id: 'preprocessing',
-      title: '2. Preprocessing & PSD',
-      desc: 'Biquad filter 0.5-45Hz, compute Theta, Alpha, Beta & FAA.',
-    },
-    {
-      id: 'emotion_estimation',
-      title: '3. Affective Decoder',
-      desc: 'Ridge Regression estimates continuous Valence & Arousal.',
-    },
-    {
-      id: 'rl_decision',
-      title: '4. REINFORCE Decision',
-      desc: 'Sample Tempo from N(μ(s), σ²), Mode and Density from Softmax.',
-    },
-    {
-      id: 'music_generation',
-      title: '5. Procedural Synthesis',
-      desc: 'Web Audio API updates polyphonic chords, scale, and density.',
-    },
-    {
-      id: 'playback',
-      title: '6. Acoustic Stimulus',
-      desc: 'Real-time auditory entrainment stimulus delivered to listener.',
-    },
-    {
-      id: 'listener_feedback',
-      title: '7. Feedback Collection',
-      desc: 'Subjective rating (1-5 stars) and perceived emotional shift.',
-    },
-    {
-      id: 'policy_update',
-      title: '8. Policy Update',
-      desc: 'Calculate R_t and optimize REINFORCE policy parameters.',
-    },
-    {
-      id: 'idle',
-      title: '9. Next Window Cycle',
-      desc: 'Listener physiology transitions towards target; loop repeats.',
-    },
+    { id: 'eeg_acquisition', title: '1. Read Brainwaves', desc: 'Collect 1 second of 3-sensor signals.' },
+    { id: 'preprocessing', title: '2. Clean Signal', desc: 'Remove noise & measure wave bands.' },
+    { id: 'emotion_estimation', title: '3. Guess Mood', desc: 'Estimate Mood & Energy on map.' },
+    { id: 'rl_decision', title: '4. AI Chooses', desc: 'Pick best speed, feel & busyness.' },
+    { id: 'music_generation', title: '5. Create Music', desc: 'Update chords and melody notes.' },
+    { id: 'playback', title: '6. Play Audio', desc: 'Play calming music to listener.' },
+    { id: 'listener_feedback', title: '7. Check Rating', desc: 'Read your star feedback & mood shift.' },
+    { id: 'policy_update', title: '8. Score & Learn', desc: 'Update AI memory from reward.' },
+    { id: 'idle', title: '9. Next Cycle', desc: 'Repeat until calm goal is reached.' },
   ];
 
   const handleStepOnce = async () => {
@@ -86,28 +55,32 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
 
   return (
     <div className="space-y-6">
-      {/* Control Console */}
+      {/* Plain-English Intro */}
+      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex items-start gap-3">
+        <Info className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+        <div className="text-xs text-slate-300 leading-relaxed">
+          <strong className="text-white block mb-0.5">What This Page Does:</strong>
+          Here you can run the full therapy session yourself. Click <strong>Run 1 Step</strong> to go slowly, or <strong>Start Live Loop</strong> to run automatically.
+          Use the star ratings on the left to tell the AI whether you liked the music—your stars change its AI Score on the next step!
+        </div>
+      </div>
+
+      {/* Control Bar */}
       <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-xs font-mono text-cyan-400 mb-1">
-              <span>CLOSED-LOOP CONTROLLER</span>
-              <span>·</span>
-              <span>CONTINUOUS NEURAL FEEDBACK ARCHITECTURE</span>
-            </div>
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <RotateCcw className={`w-5 h-5 text-cyan-400 ${state.isRunning ? 'animate-spin' : ''}`} />
-              Closed-Loop Execution & Real-Time Observer
+              Live Therapy Loop & Step Log
             </h2>
             <p className="text-xs text-slate-400 mt-1">
-              Cycle continuously or advance step-by-step to observe how generative music parameters entrain brain dynamics.
+              Each full session runs for 10 steps, then automatically saves to your Saved Sessions tab.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            {/* Speed Selector */}
-            <div className="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-xs font-mono">
-              <span className="text-slate-500">Speed:</span>
+            <div className="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-xs">
+              <span className="text-slate-400">Loop Speed:</span>
               <select
                 value={speedMs}
                 onChange={(e) => {
@@ -120,43 +93,44 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
                 }}
                 className="bg-transparent text-slate-200 focus:outline-none cursor-pointer"
               >
-                <option value={1500} className="bg-slate-900">1.5s / step (Fast)</option>
-                <option value={3000} className="bg-slate-900">3.0s / step (Normal)</option>
-                <option value={5000} className="bg-slate-900">5.0s / step (Relaxed)</option>
+                <option value={1500} className="bg-slate-900">Fast (1.5s per step)</option>
+                <option value={3000} className="bg-slate-900">Normal (3.0s per step)</option>
+                <option value={5000} className="bg-slate-900">Slow (5.0s per step)</option>
               </select>
             </div>
 
             <button
               onClick={handleStepOnce}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-xl text-xs font-semibold border border-slate-700 flex items-center gap-2 transition-colors cursor-pointer"
+              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-xl text-xs font-semibold border border-slate-700 flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
             >
               <Play className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Step Single Window</span>
+              <span>Run 1 Step</span>
             </button>
 
             <button
               onClick={handleToggleLoop}
-              className={`px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-md ${
+              className={`px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-md whitespace-nowrap ${
                 state.isRunning
                   ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-950/40'
                   : 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-cyan-950/40'
               }`}
             >
               <Disc className={`w-3.5 h-3.5 ${state.isRunning ? 'animate-spin' : ''}`} />
-              <span>{state.isRunning ? 'Pause Loop' : 'Run Continuous Loop'}</span>
+              <span>{state.isRunning ? 'Pause Loop' : 'Start Live Loop'}</span>
             </button>
 
             <button
               onClick={() => defaultClosedLoopController.resetSession()}
-              className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-xl border border-slate-800 transition-colors cursor-pointer text-xs"
-              title="Reset current session"
+              className="px-3 py-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-xl border border-slate-800 transition-colors cursor-pointer text-xs flex items-center gap-1.5"
+              title="Start a fresh 10-step session"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Restart</span>
             </button>
           </div>
         </div>
 
-        {/* 9-Stage Flow Steps Bar */}
+        {/* 9-Stage Flow Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-9 gap-2 mt-6">
           {loopStages.map((stage, idx) => {
             const isStageActive = state.currentStage === stage.id;
@@ -174,38 +148,37 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
                   {isStageActive && <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>}
                 </div>
                 <div className="text-xs font-semibold text-slate-200 leading-tight">{stage.title}</div>
-                <div className="text-[10px] text-slate-400 mt-1 leading-normal font-mono">{stage.desc}</div>
+                <div className="text-[10px] text-slate-400 mt-1 leading-normal">{stage.desc}</div>
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* Main Grid: Interactive Feedback Collection & Step History Table */}
+      {/* Main Grid: Rate the Music + Live Log */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left: Interactive Listener Feedback Submission (4 cols) */}
+        {/* Left: Listener Feedback */}
         <div className="lg:col-span-4 space-y-4">
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
             <h3 className="text-sm font-semibold text-white mb-1 flex items-center gap-2">
               <Star className="w-4 h-4 text-amber-400" />
-              Listener Subjective Feedback Intake
+              Rate the Music (Optional)
             </h3>
-            <p className="text-xs text-slate-400 mb-4 font-mono">
-              Feedback updates w₄ in multi-objective reward R_t
+            <p className="text-xs text-slate-400 mb-4">
+              Tell the AI how the music sounds right now—your rating updates the AI Score on every step!
             </p>
 
             <div className="space-y-4">
-              {/* Satisfaction Rating */}
               <div>
-                <label className="text-xs font-mono text-slate-300 flex justify-between mb-1">
-                  <span>Perceived Satisfaction:</span>
-                  <span className="text-amber-400 font-bold">{satisfaction} / 5</span>
+                <label className="text-xs text-slate-300 flex justify-between mb-1">
+                  <span>1. How much do you enjoy it?</span>
+                  <span className="text-amber-400 font-mono font-bold">{satisfaction} / 5</span>
                 </label>
                 <div className="flex items-center gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
-                      onClick={() => setSatisfaction(star)}
+                      onClick={() => applyFeedback(star, perceivedQuality, perceivedShift)}
                       className="p-1 text-slate-600 hover:text-amber-400 transition-colors cursor-pointer"
                     >
                       <Star
@@ -220,17 +193,16 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
                 </div>
               </div>
 
-              {/* Perceived Music Quality */}
               <div>
-                <label className="text-xs font-mono text-slate-300 flex justify-between mb-1">
-                  <span>Acoustic Consonance Quality:</span>
-                  <span className="text-cyan-400 font-bold">{perceivedQuality} / 5</span>
+                <label className="text-xs text-slate-300 flex justify-between mb-1">
+                  <span>2. Does the music sound smooth?</span>
+                  <span className="text-cyan-400 font-mono font-bold">{perceivedQuality} / 5</span>
                 </label>
                 <div className="flex items-center gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
-                      onClick={() => setPerceivedQuality(star)}
+                      onClick={() => applyFeedback(satisfaction, star, perceivedShift)}
                       className="p-1 text-slate-600 hover:text-cyan-400 transition-colors cursor-pointer"
                     >
                       <Star
@@ -245,55 +217,49 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
                 </div>
               </div>
 
-              {/* Perceived Emotional Shift */}
               <div>
-                <label className="text-xs font-mono text-slate-300 flex justify-between mb-1.5">
-                  <span>Felt Emotional Direction:</span>
-                  <span className="text-emerald-400 font-bold">
-                    {perceivedShift > 0 ? '+ Uplifted / Soothed' : '- Increased Tension'}
+                <label className="text-xs text-slate-300 flex justify-between mb-1.5">
+                  <span>3. How did it make you feel?</span>
+                  <span className="text-emerald-400 font-semibold">
+                    {perceivedShift > 0 ? 'More Calm' : 'More Tense'}
                   </span>
                 </label>
-                <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                <div className="grid grid-cols-2 gap-2 text-xs">
                   <button
-                    onClick={() => setPerceivedShift(1)}
+                    onClick={() => applyFeedback(satisfaction, perceivedQuality, 1)}
                     className={`p-2 rounded-lg border text-center transition-colors cursor-pointer ${
                       perceivedShift > 0
-                        ? 'bg-emerald-950/60 border-emerald-500 text-emerald-300'
+                        ? 'bg-emerald-950/60 border-emerald-500 text-emerald-300 font-semibold'
                         : 'bg-slate-950 border-slate-800 text-slate-400'
                     }`}
                   >
-                    + Toward Goal
+                    Helped Me Relax
                   </button>
                   <button
-                    onClick={() => setPerceivedShift(-1)}
+                    onClick={() => applyFeedback(satisfaction, perceivedQuality, -1)}
                     className={`p-2 rounded-lg border text-center transition-colors cursor-pointer ${
                       perceivedShift < 0
-                        ? 'bg-rose-950/60 border-rose-500 text-rose-300'
+                        ? 'bg-rose-950/60 border-rose-500 text-rose-300 font-semibold'
                         : 'bg-slate-950 border-slate-800 text-slate-400'
                     }`}
                   >
-                    - Agitated
+                    Felt Agitated
                   </button>
                 </div>
-              </div>
-
-              <div className="pt-3 border-t border-slate-800 text-[11px] font-mono text-slate-400 leading-normal">
-                Subjective inputs adjust the online reward scalar before being packaged with EEG state features for the next REINFORCE episode.
               </div>
             </div>
           </div>
 
-          {/* Active Decision KPI Box */}
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
-              Active Session Progress
+            <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
+              Current Session Progress
             </span>
             <div className="mt-2 flex items-baseline justify-between">
-              <span className="text-2xl font-mono font-bold text-white">
+              <span className="text-2xl font-mono font-bold text-white tabular-nums">
                 Step {state.currentStep} / {state.maxSteps}
               </span>
-              <span className="text-xs font-mono text-cyan-400">
-                Dist: {state.distanceToTarget}
+              <span className="text-xs font-mono text-cyan-400 tabular-nums">
+                Distance: {state.distanceToTarget.toFixed(2)}
               </span>
             </div>
             <div className="w-full bg-slate-950 h-2 rounded-full mt-2 overflow-hidden border border-slate-800">
@@ -302,44 +268,49 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
                 style={{ width: `${(state.currentStep / state.maxSteps) * 100}%` }}
               />
             </div>
+            <p className="text-[11px] text-slate-400 mt-2">
+              {state.distanceToTarget <= 0.3
+                ? 'Success! Listener is inside the green Calm Goal zone (≤ 0.30).'
+                : 'Goal: bring distance down to 0.30 or lower.'}
+            </p>
           </div>
         </div>
 
-        {/* Right: Step Telemetry Table (8 cols) */}
+        {/* Right: Step History Table */}
         <div className="lg:col-span-8 space-y-4">
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-sm font-semibold text-white">
-                  Session Decision Telemetry Log
+                  Step-by-Step Activity Log
                 </h3>
-                <p className="text-xs text-slate-400 font-mono">
-                  Full step-by-step sequence of EEG features, affective predictions, actions, and rewards
+                <p className="text-xs text-slate-400">
+                  Every row shows the listener's mood, what music the AI chose, and how close they got to Calm.
                 </p>
               </div>
               <span className="text-xs font-mono text-slate-400">
-                {state.sessionSteps.length} recorded steps
+                {state.sessionSteps.length} steps recorded
               </span>
             </div>
 
             {state.sessionSteps.length === 0 ? (
-              <div className="p-8 text-center bg-slate-950 rounded-xl border border-slate-800 text-slate-400 font-mono text-xs">
-                No steps executed in this session yet. Click "Step Single Window" or "Run Continuous Loop" to observe closed-loop entrainment.
+              <div className="p-8 text-center bg-slate-950 rounded-xl border border-slate-800 text-slate-400 text-xs">
+                No steps yet in this session. Press <strong>Run 1 Step</strong> or <strong>Start Live Loop</strong> above to watch the AI work!
               </div>
             ) : (
               <div className="overflow-x-auto max-h-96 scrollbar-thin">
-                <table className="w-full text-left text-xs font-mono">
+                <table className="w-full text-left text-xs tabular-nums">
                   <thead>
                     <tr className="border-b border-slate-800 text-slate-400 text-[10px] uppercase">
                       <th className="py-2 px-2">Step</th>
-                      <th className="py-2 px-2">Affect (V, A)</th>
-                      <th className="py-2 px-2">FAA</th>
-                      <th className="py-2 px-2">Action</th>
-                      <th className="py-2 px-2 text-right">Reward R_t</th>
-                      <th className="py-2 px-2 text-right">Target Dist</th>
+                      <th className="py-2 px-2">Mood Before (M, E)</th>
+                      <th className="py-2 px-2">Brain Balance</th>
+                      <th className="py-2 px-2">Music Played</th>
+                      <th className="py-2 px-2 text-right">AI Score</th>
+                      <th className="py-2 px-2 text-right">Goal Distance</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60">
+                  <tbody className="divide-y divide-slate-800/60 font-mono">
                     {state.sessionSteps.map((step) => {
                       const v = step.emotionBefore.valence;
                       const a = step.emotionBefore.arousal;
@@ -358,10 +329,10 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
                           <td className="py-2 px-2 text-slate-300">
                             {step.eegFeatures.faa > 0 ? `+${step.eegFeatures.faa}` : step.eegFeatures.faa}
                           </td>
-                          <td className="py-2 px-2 text-slate-200">
-                            <span className="text-cyan-300 font-semibold">{step.selectedAction.tempo} BPM</span> ·{' '}
+                          <td className="py-2 px-2 text-slate-200 font-sans">
+                            <span className="text-cyan-300 font-mono font-semibold">{step.selectedAction.tempo} BPM</span> ·{' '}
                             <span className="capitalize">{step.selectedAction.mode}</span> ·{' '}
-                            <span className="text-slate-400">{step.selectedAction.density}</span>
+                            <span className="text-slate-400 capitalize">{step.selectedAction.density}</span>
                           </td>
                           <td
                             className={`py-2 px-2 text-right font-bold ${

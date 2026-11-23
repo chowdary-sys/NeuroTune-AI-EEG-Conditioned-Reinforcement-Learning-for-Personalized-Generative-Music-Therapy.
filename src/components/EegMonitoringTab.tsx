@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Activity,
-  AlertCircle,
   Download,
-  FileText,
+  Info,
   Radio,
-  RefreshCw,
   Sliders,
   Upload,
 } from 'lucide-react';
@@ -37,43 +35,40 @@ export const EegMonitoringTab: React.FC = () => {
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  // Oscilloscope waveform history buffer
   const waveformBuffer = useRef<Array<{ raw: EegRawSample; filtered: EegRawSample }>>([]);
 
-  // Emotional presets for synthetic EEG generation
   const emotionalPresets = [
     {
       id: 'anxious',
-      name: 'High Arousal, Negative Valence (Anxious / Tense)',
+      name: 'Stressed / Tense',
       valence: -0.55,
       arousal: 0.65,
-      desc: 'Elevated Beta in all leads, suppressed F4 alpha, negative FAA',
+      desc: 'Fast Beta waves are high; brain looks alert and worried',
     },
     {
       id: 'depressed',
-      name: 'Low Arousal, Negative Valence (Depressed / Dysphoric)',
+      name: 'Sad / Low Energy',
       valence: -0.45,
       arousal: -0.50,
-      desc: 'Elevated Theta, low Beta, suppressed Alpha in both leads',
+      desc: 'Slow Theta waves are higher; low energy and negative mood balance',
     },
     {
       id: 'calm',
-      name: 'Low Arousal, Positive Valence (Serene / Calm)',
+      name: 'Calm / Relaxed',
       valence: 0.60,
       arousal: -0.40,
-      desc: 'High Alpha in F3/F4, balanced or positive FAA, low Beta',
+      desc: 'Steady Alpha waves in both sides; peaceful and low stress',
     },
     {
       id: 'excited',
-      name: 'High Arousal, Positive Valence (Excited / Flow)',
+      name: 'Happy / Excited',
       valence: 0.65,
       arousal: 0.55,
-      desc: 'Robust Alpha and Beta, strong positive FAA (Left Frontal dominance)',
+      desc: 'Strong left-brain happiness balance with lively Beta energy',
     },
   ];
 
-  const handleSelectPreset = (preset: typeof emotionalPresets[0]) => {
+  const handleSelectPreset = (preset: (typeof emotionalPresets)[0]) => {
     setActiveEmotionalPreset(preset.id);
     defaultClosedLoopController.setSimulatedPatientEmotion(preset.valence, preset.arousal);
   };
@@ -84,7 +79,6 @@ export const EegMonitoringTab: React.FC = () => {
     defaultEegEngine.setNoiseLevel(val);
   };
 
-  // Real-time animation loop for EEG oscilloscope
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -97,7 +91,6 @@ export const EegMonitoringTab: React.FC = () => {
     const render = () => {
       animId = requestAnimationFrame(render);
 
-      // Generate 2 new samples per frame (approx 120Hz at 60fps)
       for (let s = 0; s < 2; s++) {
         const raw = defaultEegEngine.generateNextRawSample();
         const filtered = defaultEegEngine.filterSample(raw);
@@ -109,7 +102,6 @@ export const EegMonitoringTab: React.FC = () => {
       }
 
       sampleCounter++;
-      // Every 30 frames (~0.5s), re-extract frequency features from window
       if (sampleCounter % 30 === 0 && waveformBuffer.current.length >= 64) {
         const windowSamples = waveformBuffer.current.map((w) =>
           filterMode === 'filtered' ? w.filtered : w.raw
@@ -121,11 +113,9 @@ export const EegMonitoringTab: React.FC = () => {
       const w = canvas.width;
       const h = canvas.height;
 
-      // Dark oscilloscope canvas background
       ctx.fillStyle = '#080c14';
       ctx.fillRect(0, 0, w, h);
 
-      // Grid coordinate lines
       ctx.strokeStyle = 'rgba(30, 41, 59, 0.4)';
       ctx.lineWidth = 1;
       const numLines = 8;
@@ -146,17 +136,16 @@ export const EegMonitoringTab: React.FC = () => {
         color: string;
         baseY: number;
       }> = [
-        { key: 'f3', label: 'Lead 1: F3 (Left Frontal)', color: '#38bdf8', baseY: h * 0.22 },
-        { key: 'f4', label: 'Lead 2: F4 (Right Frontal)', color: '#818cf8', baseY: h * 0.52 },
-        { key: 'pz', label: 'Lead 3: Pz (Parietal Midline)', color: '#34d399', baseY: h * 0.82 },
+        { key: 'f3', label: 'Sensor 1: F3 (Front Left)', color: '#38bdf8', baseY: h * 0.22 },
+        { key: 'f4', label: 'Sensor 2: F4 (Front Right)', color: '#818cf8', baseY: h * 0.52 },
+        { key: 'pz', label: 'Sensor 3: Pz (Top Back)', color: '#34d399', baseY: h * 0.82 },
       ];
 
       channels.forEach(({ key, label, color, baseY }) => {
         if (selectedChannel !== 'all' && selectedChannel !== key) return;
 
-        // Channel baseline label
         ctx.fillStyle = color;
-        ctx.font = '10px JetBrains Mono';
+        ctx.font = '11px JetBrains Mono';
         ctx.fillText(label, 12, baseY - 22);
 
         ctx.strokeStyle = 'rgba(71, 85, 105, 0.3)';
@@ -167,13 +156,12 @@ export const EegMonitoringTab: React.FC = () => {
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Waveform trace
         ctx.lineWidth = 1.5;
         ctx.strokeStyle = color;
         ctx.beginPath();
 
         const stepX = w / 360;
-        const scaleY = 0.75; // uV to pixel height
+        const scaleY = 0.75;
 
         for (let i = 0; i < buf.length; i++) {
           const sample = filterMode === 'filtered' ? buf[i].filtered : buf[i].raw;
@@ -195,7 +183,6 @@ export const EegMonitoringTab: React.FC = () => {
     };
   }, [filterMode, selectedChannel]);
 
-  // CSV Upload handler
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -232,7 +219,7 @@ export const EegMonitoringTab: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', 'neurotune_clinical_sample_3lead.csv');
+    link.setAttribute('download', 'neurotune_sample_brainwaves.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -240,7 +227,17 @@ export const EegMonitoringTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Telemetry Ribbon & Source Mode Banner */}
+      {/* Plain-English Explainer Banner */}
+      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex items-start gap-3">
+        <Info className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+        <div className="text-xs text-slate-300 leading-relaxed">
+          <strong className="text-white block mb-0.5">What This Page Does:</strong>
+          This screen shows live simulated brainwaves from 3 sensors on the head (Front Left, Front Right, and Top Back).
+          Pick a feeling below to test how the brainwaves change, add signal noise to test robustness, or upload your own CSV brainwave file.
+        </div>
+      </div>
+
+      {/* Mode Banner */}
       <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div
@@ -253,40 +250,29 @@ export const EegMonitoringTab: React.FC = () => {
             <Radio className="w-5 h-5 animate-pulse" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold text-white">
-                {isRealMode ? 'Active Hardware Acquisition Mode' : 'Physiological EEG Simulation Engine'}
-              </h3>
-              <span
-                className={`text-[10px] font-mono px-2 py-0.5 rounded ${
-                  isRealMode
-                    ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                    : 'bg-cyan-950 text-cyan-300 border border-cyan-800'
-                }`}
-              >
-                {isRealMode ? 'HARDWARE / FILE STREAM' : 'SYNTHETIC 3-LEAD'}
-              </span>
-            </div>
+            <h3 className="text-sm font-semibold text-white">
+              {isRealMode ? 'Using External Device / Uploaded CSV File' : 'Using Built-In Brainwave Simulator'}
+            </h3>
             <p className="text-xs text-slate-400 mt-0.5">
-              Source: <span className="font-mono text-slate-300">{defaultEegEngine.getDeviceName()}</span> · 128 Hz Sampling Rate
+              Source: <span className="font-mono text-slate-300">{defaultEegEngine.getDeviceName()}</span> · 128 readings per second
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => {
               const next = !isRealMode;
               setIsRealMode(next);
-              defaultEegEngine.setDeviceConnection(next, next ? 'BioAmp Emulated LSL Stream' : 'Simulated BioAmp 3-Channel');
+              defaultEegEngine.setDeviceConnection(next, next ? 'External Hardware / CSV Stream' : 'Simulated 3-Sensor EEG');
             }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium border transition-colors cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors cursor-pointer ${
               isRealMode
                 ? 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
                 : 'bg-emerald-600/20 text-emerald-300 border-emerald-500/30 hover:bg-emerald-600/30'
             }`}
           >
-            {isRealMode ? 'Switch to Simulation Mode' : 'Connect Real Hardware (Mock)'}
+            {isRealMode ? 'Back to Simulator' : 'Test Real Device Mode'}
           </button>
 
           <input
@@ -298,8 +284,8 @@ export const EegMonitoringTab: React.FC = () => {
           />
           <button
             onClick={() => fileInputRef.current?.click()}
-            title="Upload CSV EEG recording"
-            className="px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 cursor-pointer"
+            title="Upload your own CSV recording"
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 cursor-pointer"
           >
             <Upload className="w-3.5 h-3.5 text-cyan-400" />
             <span>Upload CSV</span>
@@ -307,71 +293,68 @@ export const EegMonitoringTab: React.FC = () => {
 
           <button
             onClick={downloadSampleCsv}
-            title="Download Sample 20s CSV"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800 transition-colors cursor-pointer"
+            title="Download a sample CSV recording"
+            className="px-2.5 py-1.5 rounded-lg text-xs text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-800 transition-colors cursor-pointer flex items-center gap-1.5"
           >
-            <Download className="w-4 h-4 text-slate-400" />
+            <Download className="w-3.5 h-3.5 text-slate-400" />
+            <span>Sample CSV</span>
           </button>
         </div>
       </div>
 
-      {/* Main Grid: Oscilloscope + Controls & Spectral Extraction */}
+      {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left: Oscilloscope (8 cols) */}
+        {/* Left: Live Brainwave Graph (8 cols) */}
         <div className="lg:col-span-8 space-y-4">
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <div>
                 <h3 className="text-sm font-semibold text-white flex items-center gap-2">
                   <Activity className="w-4 h-4 text-cyan-400" />
-                  3-Channel Real-Time Oscilloscope
+                  Live Brainwave Lines (3 Sensors)
                 </h3>
-                <span className="text-xs text-slate-400 font-mono">
-                  Channels: F3 (Left Frontal), F4 (Right Frontal), Pz (Parietal)
+                <span className="text-xs text-slate-400">
+                  Switch between raw messy waves and cleaned waves (0.5–45 Hz filter)
                 </span>
               </div>
 
-              {/* Display Controls: Channel Filter & Raw/Filtered Toggle */}
-              <div className="flex items-center gap-2 font-mono text-xs">
-                {/* Raw vs Filtered */}
+              <div className="flex items-center gap-2 text-xs">
                 <div className="flex items-center p-0.5 bg-slate-950 rounded-lg border border-slate-800">
                   <button
                     onClick={() => setFilterMode('raw')}
                     className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
                       filterMode === 'raw'
-                        ? 'bg-slate-800 text-amber-300 font-bold'
+                        ? 'bg-slate-800 text-amber-300 font-semibold'
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    Raw EEG
+                    Raw (Unfiltered)
                   </button>
                   <button
                     onClick={() => setFilterMode('filtered')}
                     className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
                       filterMode === 'filtered'
-                        ? 'bg-slate-800 text-cyan-400 font-bold'
+                        ? 'bg-slate-800 text-cyan-400 font-semibold'
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    Filtered (0.5-45Hz)
+                    Cleaned Signal
                   </button>
                 </div>
 
-                {/* Channel Filter */}
                 <select
                   value={selectedChannel}
-                  onChange={(e) => setSelectedChannel(e.target.value as any)}
-                  className="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-slate-300 focus:outline-none"
+                  onChange={(e) => setSelectedChannel(e.target.value as 'all' | 'f3' | 'f4' | 'pz')}
+                  className="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-slate-300 focus:outline-none cursor-pointer"
                 >
-                  <option value="all">All 3 Leads</option>
-                  <option value="f3">Lead F3 Only</option>
-                  <option value="f4">Lead F4 Only</option>
-                  <option value="pz">Lead Pz Only</option>
+                  <option value="all">Show All 3 Sensors</option>
+                  <option value="f3">F3 (Front Left)</option>
+                  <option value="f4">F4 (Front Right)</option>
+                  <option value="pz">Pz (Top Back)</option>
                 </select>
               </div>
             </div>
 
-            {/* Canvas Oscilloscope */}
             <div className="rounded-xl overflow-hidden border border-slate-800 shadow-inner">
               <canvas
                 ref={canvasRef}
@@ -382,28 +365,28 @@ export const EegMonitoringTab: React.FC = () => {
               />
             </div>
 
-            <div className="mt-3 flex items-center justify-between text-xs text-slate-400 font-mono">
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400 font-mono">
               <div className="flex items-center gap-4">
-                <span>Vertical scale: ±50 μV</span>
-                <span>Sweep: 3.0 s window</span>
+                <span>Height: ±50 μV</span>
+                <span>Window: 3 seconds</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                <span>Signal Quality: {features.signalQuality}%</span>
+                <span>Signal Clarity: {features.signalQuality}%</span>
                 <span>·</span>
-                <span>RMS Noise: {features.noiseRms} μV</span>
+                <span>Noise: {features.noiseRms} μV</span>
               </div>
             </div>
           </div>
 
-          {/* Controllable Noise & Affective State Presets */}
+          {/* Interactive Presets & Noise Slider */}
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
-            <h4 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+            <h4 className="text-sm font-semibold text-white mb-1 flex items-center gap-2">
               <Sliders className="w-4 h-4 text-cyan-400" />
-              Controllable Simulation Parameters (Research Configuration)
+              Test Different Listener Moods & Signal Noise
             </h4>
             <p className="text-xs text-slate-400 mb-4">
-              Select physiological affective signatures to simulate clinical presentations and modulate white Gaussian noise level σ.
+              Click any feeling below to change the simulated listener's brainwaves right away:
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
@@ -420,10 +403,10 @@ export const EegMonitoringTab: React.FC = () => {
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-slate-200">{preset.name}</span>
+                      <span className="text-xs font-semibold text-white">{preset.name}</span>
                       {isActive && <span className="w-2 h-2 rounded-full bg-cyan-400"></span>}
                     </div>
-                    <p className="text-[11px] text-slate-400 mt-1 leading-normal font-mono">
+                    <p className="text-[11px] text-slate-400 mt-1 leading-normal">
                       {preset.desc}
                     </p>
                   </button>
@@ -431,13 +414,12 @@ export const EegMonitoringTab: React.FC = () => {
               })}
             </div>
 
-            {/* Noise Level Slider */}
             <div className="pt-3 border-t border-slate-800">
-              <div className="flex items-center justify-between text-xs font-mono mb-1.5">
+              <div className="flex items-center justify-between text-xs mb-1.5">
                 <span className="text-slate-300">
-                  White Gaussian Noise Level (σ): <strong className="text-cyan-400">{noiseLevel.toFixed(1)}</strong>
+                  Add Background Static / Noise (σ): <strong className="text-cyan-400 font-mono">{noiseLevel.toFixed(1)}</strong>
                 </span>
-                <span className="text-slate-500">Benchmark range: [0.5, 1.0, 1.5, 2.0]</span>
+                <span className="text-slate-500 text-[11px]">Paper tests: 0.5, 1.0, 1.5, 2.0</span>
               </div>
               <input
                 type="range"
@@ -448,37 +430,35 @@ export const EegMonitoringTab: React.FC = () => {
                 onChange={handleNoiseChange}
                 className="w-full accent-cyan-400 cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
-                <span>0.5 (Clinical Shielded)</span>
-                <span>1.0 (Standard Research)</span>
-                <span>1.5 (High Motion)</span>
-                <span>2.0 (Extreme Noise Stress)</span>
+              <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                <span>0.5 (Very Clean)</span>
+                <span>1.0 (Normal Noise)</span>
+                <span>1.5 (Noisy)</span>
+                <span>2.0 (Very Messy)</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right: Frequency Band Features & Derived Affective Markers (4 cols) */}
+        {/* Right: Brainwave Speeds & Mood Clues (4 cols) */}
         <div className="lg:col-span-4 space-y-4">
-          {/* Extracted Spectral Band Power */}
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
             <h4 className="text-sm font-semibold text-white mb-1">
-              Extracted Frequency Band Powers
+              Brainwave Energy by Speed
             </h4>
-            <p className="text-xs text-slate-400 mb-4 font-mono">
-              Welch PSD estimation (μV²/Hz) per lead
+            <p className="text-xs text-slate-400 mb-4">
+              How strong each wave rhythm is right now:
             </p>
 
-            {/* Band bars for F3 */}
             <div className="space-y-4">
               <div>
-                <div className="text-xs font-mono text-sky-400 font-semibold mb-2">
-                  Lead F3 (Left Frontal)
+                <div className="text-xs font-semibold text-sky-400 mb-2">
+                  F3 Sensor (Front Left)
                 </div>
-                <div className="space-y-1.5 text-xs font-mono">
+                <div className="space-y-2 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">θ (4-8 Hz):</span>
-                    <span className="text-slate-200">{features.thetaF3.toFixed(1)}</span>
+                    <span className="text-slate-300">Theta (4–8 Hz · Sleepy)</span>
+                    <span className="text-slate-200 font-mono">{features.thetaF3.toFixed(1)}</span>
                   </div>
                   <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
                     <div
@@ -488,8 +468,8 @@ export const EegMonitoringTab: React.FC = () => {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">α (8-13 Hz):</span>
-                    <span className="text-slate-200">{features.alphaF3.toFixed(1)}</span>
+                    <span className="text-slate-300">Alpha (8–13 Hz · Relaxed)</span>
+                    <span className="text-slate-200 font-mono">{features.alphaF3.toFixed(1)}</span>
                   </div>
                   <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
                     <div
@@ -499,8 +479,8 @@ export const EegMonitoringTab: React.FC = () => {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">β (13-30 Hz):</span>
-                    <span className="text-slate-200">{features.betaF3.toFixed(1)}</span>
+                    <span className="text-slate-300">Beta (13–30 Hz · Alert / Tense)</span>
+                    <span className="text-slate-200 font-mono">{features.betaF3.toFixed(1)}</span>
                   </div>
                   <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
                     <div
@@ -511,15 +491,14 @@ export const EegMonitoringTab: React.FC = () => {
                 </div>
               </div>
 
-              {/* Band bars for F4 */}
               <div className="pt-3 border-t border-slate-800">
-                <div className="text-xs font-mono text-indigo-400 font-semibold mb-2">
-                  Lead F4 (Right Frontal)
+                <div className="text-xs font-semibold text-indigo-400 mb-2">
+                  F4 Sensor (Front Right)
                 </div>
-                <div className="space-y-1.5 text-xs font-mono">
+                <div className="space-y-2 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">α (8-13 Hz):</span>
-                    <span className="text-slate-200">{features.alphaF4.toFixed(1)}</span>
+                    <span className="text-slate-300">Alpha (Relaxed)</span>
+                    <span className="text-slate-200 font-mono">{features.alphaF4.toFixed(1)}</span>
                   </div>
                   <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
                     <div
@@ -529,8 +508,8 @@ export const EegMonitoringTab: React.FC = () => {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">β (13-30 Hz):</span>
-                    <span className="text-slate-200">{features.betaF4.toFixed(1)}</span>
+                    <span className="text-slate-300">Beta (Alert / Tense)</span>
+                    <span className="text-slate-200 font-mono">{features.betaF4.toFixed(1)}</span>
                   </div>
                   <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
                     <div
@@ -541,15 +520,14 @@ export const EegMonitoringTab: React.FC = () => {
                 </div>
               </div>
 
-              {/* Band bars for Pz */}
               <div className="pt-3 border-t border-slate-800">
-                <div className="text-xs font-mono text-emerald-400 font-semibold mb-2">
-                  Lead Pz (Parietal Midline)
+                <div className="text-xs font-semibold text-emerald-400 mb-2">
+                  Pz Sensor (Top Back)
                 </div>
-                <div className="space-y-1.5 text-xs font-mono">
+                <div className="space-y-2 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">β (13-30 Hz):</span>
-                    <span className="text-slate-200">{features.betaPz.toFixed(1)}</span>
+                    <span className="text-slate-300">Beta (Alertness)</span>
+                    <span className="text-slate-200 font-mono">{features.betaPz.toFixed(1)}</span>
                   </div>
                   <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
                     <div
@@ -562,48 +540,40 @@ export const EegMonitoringTab: React.FC = () => {
             </div>
           </div>
 
-          {/* Derived Affective Neuro-Markers */}
+          {/* Derived Mood Clues */}
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
             <h4 className="text-sm font-semibold text-white mb-3">
-              Derived Affective Neuro-Markers
+              Two Main Mood Clues From These Waves
             </h4>
 
-            <div className="space-y-3 font-mono text-xs">
-              {/* Frontal Alpha Asymmetry */}
+            <div className="space-y-3 text-xs">
               <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Frontal Alpha Asymmetry (FAA)</span>
+                  <span className="text-slate-300 font-medium">Left vs Right Balance (FAA)</span>
                   <span
-                    className={`font-bold ${
+                    className={`font-mono font-bold ${
                       features.faa >= 0 ? 'text-emerald-400' : 'text-rose-400'
                     }`}
                   >
                     {features.faa > 0 ? `+${features.faa}` : features.faa}
                   </span>
                 </div>
-                <div className="text-[10px] text-slate-500 mt-1">
-                  Formula: ln(α_F4) - ln(α_F3)
-                </div>
-                <div className="text-[11px] text-slate-300 mt-1">
+                <div className="text-[11px] text-slate-400 mt-1">
                   {features.faa >= 0
-                    ? 'Left hemisphere dominance (Positive affect / Approach motivation)'
-                    : 'Right hemisphere dominance (Negative affect / Withdrawal motivation)'}
+                    ? 'Positive = More left-brain activity (happier mood clue)'
+                    : 'Negative = More right-brain activity (stressed mood clue)'}
                 </div>
               </div>
 
-              {/* Arousal Ratio */}
               <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Parietal Arousal Ratio</span>
-                  <span className="font-bold text-cyan-400">{features.arousalRatio}</span>
+                  <span className="text-slate-300 font-medium">Energy Ratio (Beta / Slow)</span>
+                  <span className="font-mono font-bold text-cyan-400">{features.arousalRatio}</span>
                 </div>
-                <div className="text-[10px] text-slate-500 mt-1">
-                  Formula: β_Pz / (α_Pz + θ_Pz)
-                </div>
-                <div className="text-[11px] text-slate-300 mt-1">
+                <div className="text-[11px] text-slate-400 mt-1">
                   {features.arousalRatio > 0.5
-                    ? 'Elevated physiological activation / Mental load'
-                    : 'Reduced autonomic arousal / Sedation state'}
+                    ? 'Higher score = Brain looks busy, alert, or tense'
+                    : 'Lower score = Brain looks calm and relaxed'}
                 </div>
               </div>
             </div>

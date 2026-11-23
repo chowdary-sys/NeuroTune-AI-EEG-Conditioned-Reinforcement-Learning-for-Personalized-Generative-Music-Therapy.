@@ -72,6 +72,11 @@ export class ClosedLoopController {
   private currentAction: MusicParameters = { tempo: 75, mode: 'major', density: 'medium' };
   private sessionHistory: ClosedLoopStepRecord[] = [];
   private completedSessions: SessionRecord[] = [];
+  private userFeedbackOverride: {
+    satisfaction: number;
+    perceivedQuality: number;
+    perceivedShift: number;
+  } | null = null;
 
   // Listeners for UI state reactivity
   private subscribers: Array<(state: ClosedLoopState) => void> = [];
@@ -89,6 +94,15 @@ export class ClosedLoopController {
 
     // Seed initial simulated patient state from N((-0.4, 0.5), 0.3^2 I) (Paper Section 5.1)
     this.eegEngine.setEmotionalState(-0.4, 0.5);
+  }
+
+  public setUserFeedbackOverride(feedback: {
+    satisfaction: number;
+    perceivedQuality: number;
+    perceivedShift: number;
+  } | null) {
+    this.userFeedbackOverride = feedback;
+    this.notify();
   }
 
   public subscribe(cb: (state: ClosedLoopState) => void) {
@@ -114,7 +128,7 @@ export class ClosedLoopController {
     return this.activeProfile;
   }
 
-  public setTargetEmotion(valence: number, arousal: number, label = 'Custom Target') {
+  public setTargetEmotion(valence: number, arousal: number, label = 'Custom Goal') {
     this.activeProfile.targetEmotion = {
       valence: Math.max(-1, Math.min(1, valence)),
       arousal: Math.max(-1, Math.min(1, arousal)),
@@ -216,18 +230,20 @@ export class ClosedLoopController {
     );
     this.eegEngine.setEmotionalState(newPhysioValence, newPhysioArousal);
 
-    // Subjective feedback proxy
+    // Subjective feedback proxy (or user override from UI)
     this.currentStage = 'listener_feedback';
     this.notify();
     const currentDist = Math.sqrt(
       Math.pow(estimatedEmotion.valence - this.activeProfile.targetEmotion.valence, 2) +
         Math.pow(estimatedEmotion.arousal - this.activeProfile.targetEmotion.arousal, 2)
     );
-    const userFeedback = {
-      satisfaction: currentDist < 0.4 ? 5 : currentDist < 0.7 ? 4 : currentDist < 1.0 ? 3 : 2,
-      perceivedQuality: action.tempo >= 65 && action.tempo <= 110 ? 5 : 4,
-      perceivedShift: deltaV > 0 ? 1 : -1,
-    };
+    const userFeedback = this.userFeedbackOverride
+      ? { ...this.userFeedbackOverride }
+      : {
+          satisfaction: currentDist < 0.4 ? 5 : currentDist < 0.7 ? 4 : currentDist < 1.0 ? 3 : 2,
+          perceivedQuality: action.tempo >= 65 && action.tempo <= 110 ? 5 : 4,
+          perceivedShift: deltaV > 0 ? 1 : -1,
+        };
 
     // 8. REWARD CALCULATION & POLICY UPDATE
     this.currentStage = 'policy_update';
