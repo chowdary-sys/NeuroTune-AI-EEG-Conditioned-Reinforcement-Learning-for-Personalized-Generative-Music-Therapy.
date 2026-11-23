@@ -247,7 +247,7 @@ export const EmotionDetectionTab: React.FC = () => {
                         </td>
                         <td
                           className={`py-1.5 px-2 text-right font-bold tabular-nums ${
-                            wa > 0 ? 'text-amber-400' : 'text-indigo-400'
+                            wa > 0 ? 'text-amber-400' : 'text-sky-400'
                           }`}
                         >
                           {wa > 0 ? `+${wa.toFixed(2)}` : wa.toFixed(2)}

@@ -1,8 +1,3 @@
-/**
- * NeuroTune AI – EEG-Conditioned Reinforcement Learning for Personalized Generative Music Therapy
- * Main Application Root
- */
-
 import React, { useEffect, useState } from 'react';
 import { Header, NavTab } from './components/Header';
 import { KpiRow } from './components/KpiRow';
@@ -14,6 +9,8 @@ import { ReinforcementLearningTab } from './components/ReinforcementLearningTab'
 import { ClosedLoopTab } from './components/ClosedLoopTab';
 import { EvaluationTab } from './components/EvaluationTab';
 import { SessionHistoryTab } from './components/SessionHistoryTab';
+import { PrivacyPolicyTab } from './components/PrivacyPolicyTab';
+import { TermsTab } from './components/TermsTab';
 import { UserProfileModal } from './components/UserProfileModal';
 import { ResearchDocsModal } from './components/ResearchDocsModal';
 import {
@@ -31,7 +28,6 @@ export default function App() {
   const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
 
   useEffect(() => {
-    // Subscribe to real-time closed-loop state updates
     const unsubscribe = defaultClosedLoopController.subscribe((newState) => {
       setLoopState(newState);
       setActiveProfile(newState.profile);
@@ -41,6 +37,11 @@ export default function App() {
     };
   }, []);
 
+  const handleSelectTab = (tab: NavTab) => {
+    setActiveTab(tab);
+    window.scrollTo({ top: 0 });
+  };
+
   const handleToggleLoop = () => {
     if (loopState.isRunning) {
       defaultClosedLoopController.stopContinuousLoop();
@@ -49,12 +50,13 @@ export default function App() {
     }
   };
 
+  const isLegalPage = activeTab === 'privacy' || activeTab === 'terms';
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-      {/* Top Bar Header (3-zone contract) */}
       <Header
         activeTab={activeTab}
-        onSelectTab={setActiveTab}
+        onSelectTab={handleSelectTab}
         activeProfile={activeProfile}
         onOpenProfileModal={() => setIsProfileModalOpen(true)}
         onOpenDocsModal={() => setIsDocsModalOpen(true)}
@@ -62,16 +64,13 @@ export default function App() {
         onToggleLoop={handleToggleLoop}
       />
 
-      {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* KPI Telemetry Ribbon */}
-        <KpiRow state={loopState} />
+        {!isLegalPage && <KpiRow state={loopState} />}
 
-        {/* Tab View Routing */}
         {activeTab === 'overview' && (
           <OverviewTab
             state={loopState}
-            onNavigateTab={setActiveTab}
+            onNavigateTab={handleSelectTab}
             onOpenDocsModal={() => setIsDocsModalOpen(true)}
             onOpenProfileModal={() => setIsProfileModalOpen(true)}
           />
@@ -90,25 +89,44 @@ export default function App() {
         {activeTab === 'benchmarks' && <EvaluationTab />}
 
         {activeTab === 'history' && <SessionHistoryTab />}
+
+        {activeTab === 'privacy' && <PrivacyPolicyTab />}
+
+        {activeTab === 'terms' && <TermsTab />}
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950 py-5 text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div>
-            NeuroTune AI · Smart Music Therapy Powered by Brainwaves & Reinforcement Learning (Research Demo)
+      <footer className="border-t border-slate-900 bg-slate-950 py-6 text-xs text-slate-400">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-slate-400">
+            NeuroTune: Closed-Loop EEG Music Therapy Simulation (Not a Medical Device)
           </div>
-          <div className="flex items-center gap-4 text-[11px] text-slate-400 font-mono">
-            <span>Live Browser Audio</span>
-            <span>·</span>
-            <span>Research Simulation Benchmark</span>
-            <span>·</span>
-            <span>Not a Medical Device</span>
+          <div className="flex items-center gap-5 text-xs">
+            <button
+              onClick={() => handleSelectTab('overview')}
+              className="text-slate-400 hover:text-white transition-colors cursor-pointer whitespace-nowrap"
+            >
+              Home
+            </button>
+            <button
+              onClick={() => handleSelectTab('privacy')}
+              className={`transition-colors cursor-pointer whitespace-nowrap ${
+                activeTab === 'privacy' ? 'text-cyan-400 font-medium' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Privacy Policy
+            </button>
+            <button
+              onClick={() => handleSelectTab('terms')}
+              className={`transition-colors cursor-pointer whitespace-nowrap ${
+                activeTab === 'terms' ? 'text-cyan-400 font-medium' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Terms and Conditions
+            </button>
           </div>
         </div>
       </footer>
 
-      {/* Modals */}
       <UserProfileModal
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}

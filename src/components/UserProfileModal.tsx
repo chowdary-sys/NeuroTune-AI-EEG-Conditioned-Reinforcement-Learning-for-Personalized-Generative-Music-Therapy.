@@ -74,7 +74,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
       <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl p-6">
         <div className="flex items-center justify-between pb-4 border-b border-slate-800">
           <div className="flex items-center gap-2">
-            <User className="w-5 h-5 text-indigo-400" />
+            <User className="w-5 h-5 text-cyan-400" />
             <div>
               <h3 className="text-base font-bold text-white">Choose a Listener Profile</h3>
               <p className="text-xs text-slate-400">Pick who is listening so the AI knows their mood goal and music tastes.</p>
@@ -221,7 +221,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                 <div>
                   <div className="flex justify-between mb-1 text-slate-300">
                     <span>Unique Taste Difference (h):</span>
-                    <span className="text-indigo-400 font-mono font-bold">{heterogeneity}</span>
+                    <span className="text-cyan-400 font-mono font-bold">{heterogeneity}</span>
                   </div>
                   <input
                     type="range"
@@ -230,7 +230,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                     step="0.05"
                     value={heterogeneity}
                     onChange={(e) => setHeterogeneity(parseFloat(e.target.value))}
-                    className="w-full accent-indigo-400 cursor-pointer"
+                    className="w-full accent-cyan-400 cursor-pointer"
                   />
                 </div>
               </div>

@@ -58,12 +58,7 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ height = 120 }
       for (let i = 0; i < bufferLength / 2; i++) {
         const barHeight = (freqData[i] / 255) * (h * 0.85);
 
-        // Gradient from subtle indigo to cyan
-        const gradient = ctx.createLinearGradient(0, h, 0, h - barHeight);
-        gradient.addColorStop(0, 'rgba(99, 102, 241, 0.15)');
-        gradient.addColorStop(1, 'rgba(6, 182, 212, 0.65)');
-
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = 'rgba(6, 182, 212, 0.35)';
         ctx.fillRect(barX, h - barHeight, barWidth - 1, barHeight);
         barX += barWidth;
       }

@@ -31,7 +31,6 @@ export const EvaluationTab: React.FC = () => {
   const [interactiveResult, setInteractiveResult] = useState<EvaluationBenchmarkResult | null>(null);
   const [isSimulating, setIsSimulating] = useState(false);
 
-  // Simulation controls matching Table 2 defaults
   const [numListeners, setNumListeners] = useState(1000);
   const [randomSeed, setRandomSeed] = useState(0);
   const [noiseLevel, setNoiseLevel] = useState(0.5);
@@ -78,38 +77,36 @@ export const EvaluationTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Plain-English Explainer Banner */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex items-start gap-3">
+      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex items-start gap-3">
         <Info className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
         <div className="text-xs text-slate-300 leading-relaxed">
           <strong className="text-white block mb-0.5">What This Page Shows:</strong>
-          These are the exact Section 5 &amp; Section 6 test results from the research paper (1,000 simulated listeners across 5 random runs).
-          Use the 5 tabs below to see how well our AI beats fixed playlists, which parts of the AI matter most, and when noisy signals make it harder.
+          These are the exact Section 5 and Section 6 test results from the research paper (1,000 simulated listeners across 5 random runs).
+          Use the 5 tabs below to compare our AI against fixed playlists, see which parts matter most, and check high-noise limits.
         </div>
       </div>
 
-      {/* Header & Sub-Tabs */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-cyan-400 mb-1">
-              <span>RESEARCH PAPER RESULTS (100% EXACT)</span>
+              <span>RESEARCH PAPER RESULTS</span>
               <span>·</span>
               <span>5 SEEDS × 1,000 SIMULATED LISTENERS</span>
             </div>
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <Award className="w-5 h-5 text-cyan-400" />
-              Research Results &amp; Comparisons
+              Research Results and Comparisons
             </h2>
             <p className="text-xs text-slate-400 mt-1">
-              Exact setup from Table 2: 512 listeners/round, 300 rounds, 10 steps/session, goal (0.5, −0.5), Calm Goal reached when distance d_T ≤ 0.3.
+              Table 2 settings: 512 listeners/round, 300 rounds, 10 steps/session, goal (0.5, -0.5), Calm Goal reached when distance d_T ≤ 0.3.
             </p>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={handleDownloadCsv}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-medium border border-slate-700 flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
+              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-md text-xs font-medium border border-slate-700 flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
             >
               <Download className="w-3.5 h-3.5 text-cyan-400" />
               <span>Download Paper Results (.csv)</span>
@@ -123,7 +120,7 @@ export const EvaluationTab: React.FC = () => {
             { id: 'ablation', label: '2. What Parts Matter (Table 4)' },
             { id: 'curves', label: '3. Learning Curves (Fig. 2)' },
             { id: 'qualitative', label: '4. One Listener Journey (Fig. 3)' },
-            { id: 'sensitivity', label: '5. Noise & Taste Tests (Table 5 & Fig. 4)' },
+            { id: 'sensitivity', label: '5. Noise and Taste Tests (Table 5 & Fig. 4)' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -143,21 +140,21 @@ export const EvaluationTab: React.FC = () => {
       {/* SUB-TAB 1: Table 3 Main Results */}
       {activeSubTab === 'benchmarks' && (
         <div className="space-y-6">
-          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
-            <div className="p-3.5 rounded-xl bg-cyan-950/20 border border-cyan-500/30 text-xs text-slate-200 mb-4 leading-relaxed">
-              <strong className="text-cyan-300">In Simple Words:</strong> Our AI (<strong>Proposed EEG + RL</strong>) helps <strong>60.3%</strong> of listeners reach the Calm Goal, compared to only <strong>36.1%</strong> with a normal Fixed Playlist and <strong>5.9%</strong> with Random music—while playing the smoothest music (<strong>0.938</strong> quality).
+          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
+            <div className="p-3.5 rounded-lg bg-cyan-950/20 border border-cyan-500/30 text-xs text-slate-200 mb-4 leading-relaxed">
+              <strong className="text-cyan-300">In Simple Words:</strong> Our AI (<strong>Proposed EEG + RL</strong>) helps <strong>60.3%</strong> of listeners reach the Calm Goal, compared to <strong>36.1%</strong> with a normal Fixed Playlist and <strong>5.9%</strong> with Random music, while maintaining <strong>0.938</strong> music smoothness.
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
               <h3 className="text-sm font-semibold text-white">
-                Table 3. Main Experimental Results (Mean ± SD over Five Seeds 0–4)
+                Table 3. Main Experimental Results (Mean ± SD over Five Seeds 0 to 4)
               </h3>
               <span className="text-[11px] font-mono text-slate-400">
                 1,000 test listeners/seed · Mood encoder error RMSE 0.194 (85.1% accuracy)
               </span>
             </div>
             <p className="text-xs text-slate-400 mb-4">
-              Lower final distance (d_T) and higher success rate (%) / music quality (Q_avg) are better. Oracle shows the theoretical upper limit if the true mood were known with zero error.
+              Lower final distance (d_T) and higher success rate (%) and music quality (Q_avg) are better. Oracle shows the upper reference bound if true state were known with zero error.
             </p>
 
             <div className="overflow-x-auto">
@@ -185,7 +182,7 @@ export const EvaluationTab: React.FC = () => {
                       >
                         <td className="py-3 px-3 flex items-center gap-2 font-sans">
                           {isProposed && <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />}
-                          <span className={isProposed ? 'text-cyan-300 font-semibold' : isOracle ? 'text-indigo-300' : 'text-slate-200'}>
+                          <span className={isProposed ? 'text-cyan-300 font-semibold' : isOracle ? 'text-sky-300' : 'text-slate-200'}>
                             {row.algorithm}
                           </span>
                         </td>
@@ -197,9 +194,9 @@ export const EvaluationTab: React.FC = () => {
                         </td>
                         <td className="py-3 px-3">
                           <span
-                            className={`px-2 py-0.5 rounded text-[11px] font-bold ${
+                            className={`px-2 py-0.5 rounded-sm text-[11px] font-bold ${
                               row.successRate >= 90
-                                ? 'bg-indigo-950 text-indigo-300 border border-indigo-800'
+                                ? 'bg-sky-950 text-sky-300 border border-sky-800'
                                 : row.successRate >= 55
                                 ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
                                 : row.successRate >= 30
@@ -225,7 +222,7 @@ export const EvaluationTab: React.FC = () => {
 
             <div className="mt-4 pt-3 border-t border-slate-800 text-xs text-slate-300 leading-relaxed space-y-1">
               <p>
-                <strong>Paper Takeaway (Section 6.1):</strong> Proposed (EEG + RL) finishes closest to the goal among all real-world deployable methods (<span className="font-mono text-cyan-300">d_T = 0.272</span>)—29.3% closer than Fixed playlist (<span className="font-mono">0.385</span>), 61.3% closer than Catalogue (<span className="font-mono">0.705</span>), and 66.9% closer than Random (<span className="font-mono">0.822</span>). Success jumps from <span className="font-mono">36.1%</span> to <span className="font-mono text-emerald-400">60.3%</span> (+24.1 pts).
+                <strong>Paper Takeaway (Section 6.1):</strong> Proposed (EEG + RL) finishes closest to the goal among all deployable methods (<span className="font-mono text-cyan-300">d_T = 0.272</span>): 29.3% closer than Fixed playlist (<span className="font-mono">0.385</span>), 61.3% closer than Catalogue (<span className="font-mono">0.705</span>), and 66.9% closer than Random (<span className="font-mono">0.822</span>). Success rises from <span className="font-mono">36.1%</span> to <span className="font-mono text-emerald-400">60.3%</span> (+24.1 pts).
               </p>
               <p className="text-[11px] text-slate-400">
                 Note: Results come from the paper's computer simulator (Section 4) and are not clinical patient trials.
@@ -233,8 +230,7 @@ export const EvaluationTab: React.FC = () => {
             </div>
           </div>
 
-          {/* Interactive Simulator */}
-          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
               <h3 className="text-sm font-semibold text-white flex items-center gap-2">
                 <Play className="w-4 h-4 text-cyan-400" />
@@ -243,7 +239,7 @@ export const EvaluationTab: React.FC = () => {
               <span className="text-xs font-mono text-slate-400">Table 2 Settings</span>
             </div>
             <p className="text-xs text-slate-400 mb-4">
-              Change the group size, brainwave noise, or how different each listener's tastes are, then press the button below to test a fresh virtual group right now:
+              Change the group size, brainwave noise, or listener taste variety, then press the button below to test a synthetic cohort:
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4 text-xs">
@@ -252,7 +248,7 @@ export const EvaluationTab: React.FC = () => {
                 <select
                   value={numListeners}
                   onChange={(e) => setNumListeners(parseInt(e.target.value, 10))}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-md p-2 text-slate-200"
                 >
                   <option value={256}>256 Listeners (Fast)</option>
                   <option value={512}>512 Listeners (Train Batch)</option>
@@ -261,11 +257,11 @@ export const EvaluationTab: React.FC = () => {
               </div>
 
               <div>
-                <label className="text-slate-300 block mb-1">Random Run (Seed 0–4):</label>
+                <label className="text-slate-300 block mb-1">Random Run (Seed 0 to 4):</label>
                 <select
                   value={randomSeed}
                   onChange={(e) => setRandomSeed(parseInt(e.target.value, 10))}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-md p-2 text-slate-200"
                 >
                   <option value={0}>Seed 0</option>
                   <option value={1}>Seed 1</option>
@@ -280,7 +276,7 @@ export const EvaluationTab: React.FC = () => {
                 <select
                   value={noiseLevel}
                   onChange={(e) => setNoiseLevel(parseFloat(e.target.value))}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-md p-2 text-slate-200"
                 >
                   <option value={0.1}>σ = 0.1 (Very Clean)</option>
                   <option value={0.5}>σ = 0.5 (Paper Default)</option>
@@ -294,7 +290,7 @@ export const EvaluationTab: React.FC = () => {
                 <select
                   value={heterogeneity}
                   onChange={(e) => setHeterogeneity(parseFloat(e.target.value))}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-md p-2 text-slate-200"
                 >
                   <option value={0.0}>SD = 0.0 (All Identical)</option>
                   <option value={0.15}>SD = 0.15 (Low Variety)</option>
@@ -307,14 +303,14 @@ export const EvaluationTab: React.FC = () => {
             <button
               onClick={handleRunInteractiveTrial}
               disabled={isSimulating}
-              className="w-full py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md shadow-cyan-950"
+              className="w-full py-2.5 rounded-md bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
-              <Zap className={`w-4 h-4 ${isSimulating ? 'animate-bounce' : ''}`} />
+              <Zap className="w-4 h-4" />
               <span>{isSimulating ? 'Testing Listeners...' : `Test ${numListeners} Listeners Now (Seed ${randomSeed})`}</span>
             </button>
 
             {interactiveResult && (
-              <div className="mt-4 p-4 rounded-xl bg-slate-950 border border-cyan-500/40 font-mono text-xs tabular-nums">
+              <div className="mt-4 p-4 rounded-lg bg-slate-950 border border-cyan-500/40 font-mono text-xs tabular-nums">
                 <div className="text-cyan-400 font-semibold mb-2 flex items-center justify-between font-sans">
                   <span>{interactiveResult.algorithm}</span>
                   <span className="text-emerald-400 font-bold">Reached Calm (d_T ≤ 0.3): {interactiveResult.successRate}%</span>
@@ -333,9 +329,9 @@ export const EvaluationTab: React.FC = () => {
 
       {/* SUB-TAB 2: Table 4 Ablation Study */}
       {activeSubTab === 'ablation' && (
-        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
-          <div className="p-3.5 rounded-xl bg-cyan-950/20 border border-cyan-500/30 text-xs text-slate-200 mb-4 leading-relaxed">
-            <strong className="text-cyan-300">In Simple Words:</strong> What happens if we turn off one piece of the AI at a time? Without brainwaves (<strong>No EEG</strong>), success drops from <strong>60.3%</strong> down to <strong>24.9%</strong>. Without remembering the last step (<strong>No feedback</strong>), it drops to <strong>51.0%</strong>. This proves every piece is needed!
+        <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
+          <div className="p-3.5 rounded-lg bg-cyan-950/20 border border-cyan-500/30 text-xs text-slate-200 mb-4 leading-relaxed">
+            <strong className="text-cyan-300">In Simple Words:</strong> Turning off individual pieces lowers performance. Without brainwaves (<strong>No EEG</strong>), success drops from <strong>60.3%</strong> to <strong>24.9%</strong>. Without remembering the previous step (<strong>No feedback</strong>), success drops to <strong>51.0%</strong>.
           </div>
 
           <h3 className="text-sm font-semibold text-white mb-2">
@@ -382,9 +378,9 @@ export const EvaluationTab: React.FC = () => {
 
       {/* SUB-TAB 3: Figure 2 Training Curves */}
       {activeSubTab === 'curves' && (
-        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
-          <div className="p-3.5 rounded-xl bg-cyan-950/20 border border-cyan-500/30 text-xs text-slate-200 mb-4 leading-relaxed">
-            <strong className="text-cyan-300">In Simple Words:</strong> Over 300 practice rounds, the full AI (white line) learns fastest and reaches the highest average score (~<strong>5.51</strong>). Versions missing brainwaves (gray) or mood rewards (orange) stay stuck near the bottom.
+        <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
+          <div className="p-3.5 rounded-lg bg-cyan-950/20 border border-cyan-500/30 text-xs text-slate-200 mb-4 leading-relaxed">
+            <strong className="text-cyan-300">In Simple Words:</strong> Over 300 practice rounds, the full AI (white line) improves fastest and reaches the highest average episode return (around <strong>5.51</strong>).
           </div>
 
           <div className="flex items-center justify-between mb-4">
@@ -393,7 +389,7 @@ export const EvaluationTab: React.FC = () => {
                 Figure 2. Training Curves (Mean Episode Return, Smoothed over 10 Iterations, 5 Seeds)
               </h3>
               <p className="text-xs text-slate-400">
-                Higher line = better overall therapy &amp; music score across 300 REINFORCE rounds (512 listeners per batch)
+                Higher line indicates higher combined therapy and music score across 300 REINFORCE rounds (512 listeners per batch)
               </p>
             </div>
             <span className="text-xs font-mono text-slate-400">0 to 300 rounds</span>
@@ -428,9 +424,9 @@ export const EvaluationTab: React.FC = () => {
 
       {/* SUB-TAB 4: Figure 3 Qualitative Trajectory */}
       {activeSubTab === 'qualitative' && (
-        <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
-          <div className="p-3.5 rounded-xl bg-cyan-950/20 border border-cyan-500/30 text-xs text-slate-200 mb-4 leading-relaxed">
-            <strong className="text-cyan-300">In Simple Words:</strong> Follow one stressed listener who starts far away from Calm (<strong>1.32</strong> away). Our AI (blue path) steers them straight into the green Calm Goal box in just 2 steps and finishes <strong>0.17</strong> away, while Fixed Playlist stops short (<strong>0.53</strong> away).
+        <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
+          <div className="p-3.5 rounded-lg bg-cyan-950/20 border border-cyan-500/30 text-xs text-slate-200 mb-4 leading-relaxed">
+            <strong className="text-cyan-300">In Simple Words:</strong> Starting <strong>1.32</strong> away from Calm, our AI (blue path) enters the green Calm Goal box in 2 steps and finishes <strong>0.17</strong> away, while Fixed Playlist stops at <strong>0.53</strong> away.
           </div>
 
           <div className="mb-4">
@@ -438,7 +434,7 @@ export const EvaluationTab: React.FC = () => {
               Figure 3. One Listener's Mood Journey on the Map (Section 6.3)
             </h3>
             <p className="text-xs text-slate-400 mt-1">
-              Hidden listener bias b = (−0.33, −0.37), responsiveness 0.45, starting 1.32 from target (0.5, −0.5) with green success zone d_T ≤ 0.3.
+              Hidden listener bias b = (-0.33, -0.37), responsiveness 0.45, starting 1.32 from target (0.5, -0.5) with green success zone d_T ≤ 0.3.
             </p>
           </div>
 
@@ -485,8 +481,8 @@ export const EvaluationTab: React.FC = () => {
             </ResponsiveContainer>
           </div>
 
-          <div className="mt-4 p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 leading-relaxed">
-            At step 0, the decoder reads z = (−0.58, −0.27) and the AI picks music parameters (0.22, 0.99, 0.18) with smoothness Q = 0.97. Under Proposed (EEG + RL), the listener enters the green Calm zone (d ≤ 0.3) after just 2 decisions and finishes 0.17 from goal, whereas Fixed playlist stops at 0.53 and Catalogue at 0.90.
+          <div className="mt-4 p-4 rounded-lg bg-slate-950 border border-slate-800 text-xs text-slate-300 leading-relaxed">
+            At step 0, the decoder reads z = (-0.58, -0.27) and the AI picks music parameters (0.22, 0.99, 0.18) with smoothness Q = 0.97. Under Proposed (EEG + RL), the listener enters the green Calm zone (d ≤ 0.3) after 2 decisions and finishes 0.17 from goal, whereas Fixed playlist stops at 0.53 and Catalogue at 0.90.
           </div>
         </div>
       )}
@@ -494,17 +490,17 @@ export const EvaluationTab: React.FC = () => {
       {/* SUB-TAB 5: Table 5 & Figure 4 Noise & Diversity */}
       {activeSubTab === 'sensitivity' && (
         <div className="space-y-6">
-          <div className="p-4 rounded-2xl bg-cyan-950/20 border border-cyan-500/30 text-xs text-slate-200 leading-relaxed">
-            <strong className="text-cyan-300">In Simple Words (Honest Limits From the Paper):</strong> Our AI shines when brainwaves are reasonably clean (noise σ ≤ 0.5) and when listeners have different tastes (SD ≥ 0.15). If brainwaves are extremely noisy (σ ≥ 1.0) or every single person likes the exact same thing (SD = 0.0), a simple Fixed Playlist does better because there is nothing unique to personalize!
+          <div className="p-4 rounded-xl bg-cyan-950/20 border border-cyan-500/30 text-xs text-slate-200 leading-relaxed">
+            <strong className="text-cyan-300">In Simple Words (Honest Limits From the Paper):</strong> Our AI performs best when brainwaves are reasonably clean (noise σ ≤ 0.5) and when listeners have distinct preferences (SD ≥ 0.15). Under very high EEG noise (σ ≥ 1.0) or identical listeners (SD = 0.0), a Fixed Playlist performs better because there is little reliable variation to adapt to.
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+            <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
               <h3 className="text-sm font-semibold text-white mb-1">
                 Figure 4 (Left). Effect of Brainwave Noise (σ)
               </h3>
               <p className="text-xs text-slate-400 mb-4">
-                Lower distance (d_T) is better · Average across 3 runs (seeds 0–2)
+                Lower distance (d_T) is better · Average across 3 runs (seeds 0 to 2)
               </p>
 
               <div className="h-64 w-full">
@@ -531,16 +527,16 @@ export const EvaluationTab: React.FC = () => {
                 </ResponsiveContainer>
               </div>
               <div className="text-[11px] text-slate-400 mt-2">
-                At high noise (σ = 1.0 and 2.0), Proposed distance (0.532, 0.544) is higher than Fixed playlist (0.387), showing the high-noise limit.
+                At high noise (σ = 1.0 and 2.0), Proposed distance (0.532, 0.544) is higher than Fixed playlist (0.387), identifying the high-noise limit.
               </div>
             </div>
 
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+            <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
               <h3 className="text-sm font-semibold text-white mb-1">
                 Figure 4 (Right). Effect of Listener Differences (Taste SD)
               </h3>
               <p className="text-xs text-slate-400 mb-4">
-                Lower distance (d_T) is better · Average across 3 runs (seeds 0–2)
+                Lower distance (d_T) is better · Average across 3 runs (seeds 0 to 2)
               </p>
 
               <div className="h-64 w-full">
@@ -567,14 +563,14 @@ export const EvaluationTab: React.FC = () => {
                 </ResponsiveContainer>
               </div>
               <div className="text-[11px] text-slate-400 mt-2">
-                When all listeners are identical (SD 0.0), Fixed playlist (0.158) beats Proposed (0.177); AI personalization wins as soon as people differ (SD ≥ 0.15).
+                When all listeners are identical (SD 0.0), Fixed playlist (0.158) beats Proposed (0.177); AI personalization wins when listeners differ (SD ≥ 0.15).
               </div>
             </div>
           </div>
 
-          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
             <h3 className="text-sm font-semibold text-white mb-3">
-              Table 5. Final Distance d_T (Lower Is Better) Across Noise &amp; Listener Variety (Mean ± SD, 3 Seeds)
+              Table 5. Final Distance d_T (Lower Is Better) Across Noise and Listener Variety (Mean ± SD, 3 Seeds)
             </h3>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs font-mono tabular-nums">

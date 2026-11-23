@@ -63,13 +63,13 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
 
   return (
     <div className="flex flex-col items-center">
-      <div className="relative border border-slate-800 rounded-xl bg-slate-950 p-2 shadow-inner w-full max-w-[380px]">
+      <div className="relative border border-slate-800 rounded-lg bg-slate-950 p-2 w-full max-w-[380px]">
         <svg
           viewBox={`0 0 ${size} ${size}`}
           onClick={handleSvgClick}
-          className={`w-full h-auto ${interactive ? 'cursor-crosshair' : 'cursor-default'} select-none`}
+          className={`w-full h-auto ${interactive ? 'cursor-pointer' : 'cursor-default'} select-none`}
         >
-          {/* Subtle Quadrant Background Tints */}
+          {/* Subtle Quadrant Background Tints (neutral slate, amber, emerald, rose - no purple) */}
           <rect
             x={padding}
             y={padding}
@@ -89,7 +89,7 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             y={padding + plotHeight / 2}
             width={plotWidth / 2}
             height={plotHeight / 2}
-            fill="rgba(99, 102, 241, 0.04)"
+            fill="rgba(100, 116, 139, 0.06)"
           />
           <rect
             x={padding + plotWidth / 2}
@@ -99,7 +99,6 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             fill="rgba(16, 185, 129, 0.06)"
           />
 
-          {/* Grid lines */}
           <line
             x1={padding}
             y1={padding + plotHeight / 2}
@@ -117,7 +116,6 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             strokeWidth="1.5"
           />
 
-          {/* Tick circles */}
           <circle
             cx={padding + plotWidth / 2}
             cy={padding + plotHeight / 2}
@@ -135,7 +133,6 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             strokeDasharray="4 4"
           />
 
-          {/* Friendly Quadrant Labels */}
           <text
             x={padding + 10}
             y={padding + 20}
@@ -154,7 +151,7 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
           <text
             x={padding + 10}
             y={padding + plotHeight - 12}
-            className="text-[11px] font-mono fill-indigo-400/90 font-semibold tracking-wide"
+            className="text-[11px] font-mono fill-slate-300/90 font-semibold tracking-wide"
           >
             SAD / TIRED
           </text>
@@ -167,7 +164,6 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             CALM / RELAXED
           </text>
 
-          {/* Plain-English Axis Labels */}
           <text
             x={padding + plotWidth / 2}
             y={padding - 14}
@@ -201,7 +197,6 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             + Mood
           </text>
 
-          {/* Target Success Zone */}
           <circle
             cx={targetX}
             cy={targetY}
@@ -212,7 +207,6 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             strokeDasharray="3 3"
           />
 
-          {/* Target Center Point */}
           <circle cx={targetX} cy={targetY} r={6} fill="#10b981" />
           <text
             x={targetX}
@@ -223,7 +217,6 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             Calm Goal ({targetEmotion.valence > 0 ? `+${targetEmotion.valence}` : targetEmotion.valence}, {targetEmotion.arousal > 0 ? `+${targetEmotion.arousal}` : targetEmotion.arousal})
           </text>
 
-          {/* Trajectory Polyline */}
           {trajectory.length > 1 && (
             <g>
               <polyline
@@ -248,7 +241,6 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             </g>
           )}
 
-          {/* Current State Pulse */}
           <circle
             cx={currX}
             cy={currY}
@@ -259,7 +251,6 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             strokeDasharray="2 2"
           />
 
-          {/* Current State Indicator */}
           <circle cx={currX} cy={currY} r={7} fill="#0ea5e9" stroke="#ffffff" strokeWidth="2" />
           <text
             x={currX}
@@ -267,27 +258,27 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             textAnchor="middle"
             className="text-[10px] font-mono fill-sky-200 font-semibold"
           >
-            You Now ({currentEmotion.valence > 0 ? `+${currentEmotion.valence}` : currentEmotion.valence}, {currentEmotion.arousal > 0 ? `+${currentEmotion.arousal}` : currentEmotion.arousal})
+            Now ({currentEmotion.valence > 0 ? `+${currentEmotion.valence}` : currentEmotion.valence}, {currentEmotion.arousal > 0 ? `+${currentEmotion.arousal}` : currentEmotion.arousal})
           </text>
         </svg>
       </div>
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 w-full max-w-[380px] text-xs text-slate-300">
         <span className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-sky-500 inline-block"></span>
+          <span className="w-2.5 h-2.5 rounded-xs bg-sky-500 inline-block"></span>
           <span>
-            Blue dot = Now: <strong className="text-white">{friendlyQuadrant(currentEmotion.quadrant)}</strong>
+            Now: <strong className="text-white">{friendlyQuadrant(currentEmotion.quadrant)}</strong>
           </span>
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
-          <span>Green circle = Goal (d_T ≤ 0.30)</span>
+          <span className="w-2.5 h-2.5 rounded-xs bg-emerald-500 inline-block"></span>
+          <span>Calm Goal (d_T ≤ 0.30)</span>
         </span>
       </div>
 
       {interactive && (
         <p className="text-[11px] text-slate-400 mt-1.5 text-center">
-          Tip: Click anywhere inside the map above to move your green Calm Goal.
+          Click anywhere inside the map above to move your green Calm Goal.
         </p>
       )}
     </div>

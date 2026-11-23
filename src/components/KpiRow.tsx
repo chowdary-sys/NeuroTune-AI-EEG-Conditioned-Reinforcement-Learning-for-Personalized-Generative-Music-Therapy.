@@ -17,7 +17,7 @@ export const KpiRow: React.FC<KpiRowProps> = ({ state }) => {
           recentStepsWithFeedback.reduce((acc, s) => acc + (s.userFeedback?.satisfaction || 0), 0) /
           recentStepsWithFeedback.length
         ).toFixed(1)
-      : '4.8';
+      : null;
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
@@ -32,13 +32,10 @@ export const KpiRow: React.FC<KpiRowProps> = ({ state }) => {
           </span>
           <span className="text-[11px] font-mono text-slate-500 ml-1.5">-1 to +1</span>
         </div>
-        <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${
-              currentEmotion.valence >= 0 ? 'bg-emerald-400' : 'bg-rose-400'
-            }`}
-          />
-          <span>{currentEmotion.valence >= 0 ? 'Positive / Happy' : 'Negative / Upset'}</span>
+        <div className="text-[11px] text-slate-400">
+          <span className={currentEmotion.valence >= 0 ? 'text-emerald-400 font-medium' : 'text-rose-400 font-medium'}>
+            {currentEmotion.valence >= 0 ? 'Positive / Calm' : 'Negative / Upset'}
+          </span>
         </div>
       </div>
 
@@ -53,13 +50,10 @@ export const KpiRow: React.FC<KpiRowProps> = ({ state }) => {
           </span>
           <span className="text-[11px] font-mono text-slate-500 ml-1.5">-1 to +1</span>
         </div>
-        <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${
-              currentEmotion.arousal <= 0 ? 'bg-cyan-400' : 'bg-amber-400'
-            }`}
-          />
-          <span>{currentEmotion.arousal <= 0 ? 'Calm / Relaxed' : 'Tense / High Energy'}</span>
+        <div className="text-[11px] text-slate-400">
+          <span className={currentEmotion.arousal <= 0 ? 'text-cyan-400 font-medium' : 'text-amber-400 font-medium'}>
+            {currentEmotion.arousal <= 0 ? 'Calm / Low Energy' : 'Tense / High Energy'}
+          </span>
         </div>
       </div>
 
@@ -79,10 +73,10 @@ export const KpiRow: React.FC<KpiRowProps> = ({ state }) => {
         </div>
       </div>
 
-      {/* 4. AI Score (Reward) */}
+      {/* 4. AI Score (Real state only, zero fake defaults) */}
       <div className="bg-slate-900/60 border border-slate-800/80 rounded-xl p-3.5 flex flex-col justify-between">
         <span className="text-[11px] font-medium text-slate-400">
-          AI Score (Reward)
+          Step Reward Score
         </span>
         <div className="my-1.5 flex items-baseline">
           <span className="text-2xl font-mono font-bold tabular-nums text-emerald-400">
@@ -90,12 +84,14 @@ export const KpiRow: React.FC<KpiRowProps> = ({ state }) => {
               ? lastReward.totalReward > 0
                 ? `+${lastReward.totalReward.toFixed(2)}`
                 : lastReward.totalReward.toFixed(2)
-              : '+1.15'}
+              : '--'}
           </span>
-          <span className="text-[11px] font-mono text-slate-500 ml-1.5">points</span>
+          <span className="text-[11px] font-mono text-slate-500 ml-1.5">
+            {lastReward ? 'points' : 'pending'}
+          </span>
         </div>
         <div className="text-[11px] text-slate-400">
-          Mood shift: {lastReward ? formatVal(lastReward.emotionalProgress) : '+0.72'}
+          {lastReward ? `Mood shift: ${formatVal(lastReward.emotionalProgress)}` : 'Run 1 step to score'}
         </div>
       </div>
 
@@ -115,7 +111,7 @@ export const KpiRow: React.FC<KpiRowProps> = ({ state }) => {
           <span className="text-[11px] font-mono text-slate-500 ml-1.5">goal ≤ 0.30</span>
         </div>
         <div className="text-[11px] text-slate-400">
-          Rating: <span className="font-mono text-slate-300">{avgSatisfaction} / 5.0</span>
+          {avgSatisfaction ? `Step rating: ${avgSatisfaction} / 5.0` : 'No step rating yet'}
         </div>
       </div>
 
@@ -133,7 +129,7 @@ export const KpiRow: React.FC<KpiRowProps> = ({ state }) => {
           </span>
         </div>
         <div className="text-[11px] text-slate-400">
-          Paper benchmark: <span className="font-mono text-emerald-400">60.3% success</span>
+          {state.distanceToTarget <= 0.3 ? 'Inside calm target zone' : 'Target radius: 0.30'}
         </div>
       </div>
     </div>

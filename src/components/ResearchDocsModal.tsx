@@ -38,7 +38,7 @@ export const ResearchDocsModal: React.FC<ResearchDocsModalProps> = ({ isOpen, on
               <span className="text-cyan-400 font-mono">01.</span> What Problem Does This Project Solve?
             </h3>
             <p>
-              Normal music playlists are static—they play the same songs even if you start feeling more stressed.
+              Normal music playlists are static: they play the same songs even if you start feeling more stressed.
               NeuroTune AI creates a <strong>closed loop</strong>: it reads simulated brainwaves, estimates your current mood (positive/negative) and energy (calm/tense), and uses Reinforcement Learning to keep adjusting custom music until your mood moves into the Calm Goal zone.
             </p>
           </div>

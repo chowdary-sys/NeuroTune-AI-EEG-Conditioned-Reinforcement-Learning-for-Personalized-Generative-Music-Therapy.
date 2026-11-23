@@ -31,13 +31,13 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
 
   const loopStages = [
     { id: 'eeg_acquisition', title: '1. Read Brainwaves', desc: 'Collect 1 second of 3-sensor signals.' },
-    { id: 'preprocessing', title: '2. Clean Signal', desc: 'Remove noise & measure wave bands.' },
-    { id: 'emotion_estimation', title: '3. Guess Mood', desc: 'Estimate Mood & Energy on map.' },
-    { id: 'rl_decision', title: '4. AI Chooses', desc: 'Pick best speed, feel & busyness.' },
+    { id: 'preprocessing', title: '2. Clean Signal', desc: 'Remove noise and measure wave bands.' },
+    { id: 'emotion_estimation', title: '3. Guess Mood', desc: 'Estimate Mood and Energy on map.' },
+    { id: 'rl_decision', title: '4. AI Chooses', desc: 'Pick best speed, feel, and busyness.' },
     { id: 'music_generation', title: '5. Create Music', desc: 'Update chords and melody notes.' },
     { id: 'playback', title: '6. Play Audio', desc: 'Play calming music to listener.' },
-    { id: 'listener_feedback', title: '7. Check Rating', desc: 'Read your star feedback & mood shift.' },
-    { id: 'policy_update', title: '8. Score & Learn', desc: 'Update AI memory from reward.' },
+    { id: 'listener_feedback', title: '7. Check Rating', desc: 'Read your star feedback and mood shift.' },
+    { id: 'policy_update', title: '8. Score and Learn', desc: 'Update AI memory from reward.' },
     { id: 'idle', title: '9. Next Cycle', desc: 'Repeat until calm goal is reached.' },
   ];
 
@@ -55,23 +55,20 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
 
   return (
     <div className="space-y-6">
-      {/* Plain-English Intro */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex items-start gap-3">
+      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex items-start gap-3">
         <Info className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
         <div className="text-xs text-slate-300 leading-relaxed">
           <strong className="text-white block mb-0.5">What This Page Does:</strong>
-          Here you can run the full therapy session yourself. Click <strong>Run 1 Step</strong> to go slowly, or <strong>Start Live Loop</strong> to run automatically.
-          Use the star ratings on the left to tell the AI whether you liked the music—your stars change its AI Score on the next step!
+          Run the therapy loop one step at a time or automatically. Use the star ratings on the left to tell the algorithm how the music sounds; your ratings directly change the reward score on the next step.
         </div>
       </div>
 
-      {/* Control Bar */}
-      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <RotateCcw className={`w-5 h-5 text-cyan-400 ${state.isRunning ? 'animate-spin' : ''}`} />
-              Live Therapy Loop & Step Log
+              <RotateCcw className="w-5 h-5 text-cyan-400" />
+              Live Therapy Loop and Step Log
             </h2>
             <p className="text-xs text-slate-400 mt-1">
               Each full session runs for 10 steps, then automatically saves to your Saved Sessions tab.
@@ -79,7 +76,7 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800 text-xs">
+            <div className="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-md border border-slate-800 text-xs">
               <span className="text-slate-400">Loop Speed:</span>
               <select
                 value={speedMs}
@@ -101,7 +98,7 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
 
             <button
               onClick={handleStepOnce}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-xl text-xs font-semibold border border-slate-700 flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
+              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-md text-xs font-semibold border border-slate-700 flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
             >
               <Play className="w-3.5 h-3.5 text-cyan-400" />
               <span>Run 1 Step</span>
@@ -109,19 +106,19 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
 
             <button
               onClick={handleToggleLoop}
-              className={`px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-md whitespace-nowrap ${
+              className={`px-5 py-2 rounded-md text-xs font-bold flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap ${
                 state.isRunning
-                  ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-950/40'
-                  : 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-cyan-950/40'
+                  ? 'bg-rose-600 hover:bg-rose-500 text-white'
+                  : 'bg-cyan-500 hover:bg-cyan-400 text-slate-950'
               }`}
             >
-              <Disc className={`w-3.5 h-3.5 ${state.isRunning ? 'animate-spin' : ''}`} />
+              <Disc className="w-3.5 h-3.5" />
               <span>{state.isRunning ? 'Pause Loop' : 'Start Live Loop'}</span>
             </button>
 
             <button
               onClick={() => defaultClosedLoopController.resetSession()}
-              className="px-3 py-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-xl border border-slate-800 transition-colors cursor-pointer text-xs flex items-center gap-1.5"
+              className="px-3 py-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-md border border-slate-800 transition-colors cursor-pointer text-xs flex items-center gap-1.5"
               title="Start a fresh 10-step session"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -130,22 +127,21 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
           </div>
         </div>
 
-        {/* 9-Stage Flow Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-9 gap-2 mt-6">
           {loopStages.map((stage, idx) => {
             const isStageActive = state.currentStage === stage.id;
             return (
               <div
                 key={stage.id}
-                className={`p-3 rounded-xl border transition-all ${
+                className={`p-3 rounded-lg border transition-colors ${
                   isStageActive
-                    ? 'bg-cyan-950/60 border-cyan-400 shadow-md shadow-cyan-950'
+                    ? 'bg-cyan-950/60 border-cyan-400'
                     : 'bg-slate-950/60 border-slate-800/80 hover:border-slate-700'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-[10px] font-mono text-slate-500">0{idx + 1}</span>
-                  {isStageActive && <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>}
+                  {isStageActive && <span className="text-[10px] font-mono text-cyan-400">ACTIVE</span>}
                 </div>
                 <div className="text-xs font-semibold text-slate-200 leading-tight">{stage.title}</div>
                 <div className="text-[10px] text-slate-400 mt-1 leading-normal">{stage.desc}</div>
@@ -155,24 +151,22 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
         </div>
       </div>
 
-      {/* Main Grid: Rate the Music + Live Log */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left: Listener Feedback */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
+          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5">
             <h3 className="text-sm font-semibold text-white mb-1 flex items-center gap-2">
               <Star className="w-4 h-4 text-amber-400" />
               Rate the Music (Optional)
             </h3>
             <p className="text-xs text-slate-400 mb-4">
-              Tell the AI how the music sounds right now—your rating updates the AI Score on every step!
+              Tell the algorithm how the music sounds right now. Your rating updates the step reward on every step.
             </p>
 
             <div className="space-y-4">
               <div>
                 <label className="text-xs text-slate-300 flex justify-between mb-1">
                   <span>1. How much do you enjoy it?</span>
-                  <span className="text-amber-400 font-mono font-bold">{satisfaction} / 5</span>
+                  <span className="text-amber-400 font-mono font-bold tabular-nums">{satisfaction} / 5</span>
                 </label>
                 <div className="flex items-center gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -196,7 +190,7 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
               <div>
                 <label className="text-xs text-slate-300 flex justify-between mb-1">
                   <span>2. Does the music sound smooth?</span>
-                  <span className="text-cyan-400 font-mono font-bold">{perceivedQuality} / 5</span>
+                  <span className="text-cyan-400 font-mono font-bold tabular-nums">{perceivedQuality} / 5</span>
                 </label>
                 <div className="flex items-center gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -227,7 +221,7 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <button
                     onClick={() => applyFeedback(satisfaction, perceivedQuality, 1)}
-                    className={`p-2 rounded-lg border text-center transition-colors cursor-pointer ${
+                    className={`p-2 rounded-md border text-center transition-colors cursor-pointer ${
                       perceivedShift > 0
                         ? 'bg-emerald-950/60 border-emerald-500 text-emerald-300 font-semibold'
                         : 'bg-slate-950 border-slate-800 text-slate-400'
@@ -237,7 +231,7 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
                   </button>
                   <button
                     onClick={() => applyFeedback(satisfaction, perceivedQuality, -1)}
-                    className={`p-2 rounded-lg border text-center transition-colors cursor-pointer ${
+                    className={`p-2 rounded-md border text-center transition-colors cursor-pointer ${
                       perceivedShift < 0
                         ? 'bg-rose-950/60 border-rose-500 text-rose-300 font-semibold'
                         : 'bg-slate-950 border-slate-800 text-slate-400'
@@ -250,7 +244,7 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
             </div>
           </div>
 
-          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
+          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5">
             <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
               Current Session Progress
             </span>
@@ -262,30 +256,29 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
                 Distance: {state.distanceToTarget.toFixed(2)}
               </span>
             </div>
-            <div className="w-full bg-slate-950 h-2 rounded-full mt-2 overflow-hidden border border-slate-800">
+            <div className="w-full bg-slate-950 h-2 rounded-xs mt-2 overflow-hidden border border-slate-800">
               <div
-                className="bg-cyan-400 h-full rounded-full transition-all"
+                className="bg-cyan-400 h-full transition-all"
                 style={{ width: `${(state.currentStep / state.maxSteps) * 100}%` }}
               />
             </div>
             <p className="text-[11px] text-slate-400 mt-2">
               {state.distanceToTarget <= 0.3
-                ? 'Success! Listener is inside the green Calm Goal zone (≤ 0.30).'
+                ? 'Success: Listener is inside the green Calm Goal zone (≤ 0.30).'
                 : 'Goal: bring distance down to 0.30 or lower.'}
             </p>
           </div>
         </div>
 
-        {/* Right: Step History Table */}
         <div className="lg:col-span-8 space-y-4">
-          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-sm font-semibold text-white">
                   Step-by-Step Activity Log
                 </h3>
                 <p className="text-xs text-slate-400">
-                  Every row shows the listener's mood, what music the AI chose, and how close they got to Calm.
+                  Every row shows the listener's mood, what music the AI chose, and distance to Calm.
                 </p>
               </div>
               <span className="text-xs font-mono text-slate-400">
@@ -294,8 +287,8 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
             </div>
 
             {state.sessionSteps.length === 0 ? (
-              <div className="p-8 text-center bg-slate-950 rounded-xl border border-slate-800 text-slate-400 text-xs">
-                No steps yet in this session. Press <strong>Run 1 Step</strong> or <strong>Start Live Loop</strong> above to watch the AI work!
+              <div className="p-8 text-center bg-slate-950 rounded-lg border border-slate-800 text-slate-400 text-xs">
+                No steps yet in this session. Press <strong>Run 1 Step</strong> or <strong>Start Live Loop</strong> above to begin.
               </div>
             ) : (
               <div className="overflow-x-auto max-h-96 scrollbar-thin">
@@ -306,7 +299,7 @@ export const ClosedLoopTab: React.FC<ClosedLoopTabProps> = ({ state }) => {
                       <th className="py-2 px-2">Mood Before (M, E)</th>
                       <th className="py-2 px-2">Brain Balance</th>
                       <th className="py-2 px-2">Music Played</th>
-                      <th className="py-2 px-2 text-right">AI Score</th>
+                      <th className="py-2 px-2 text-right">Reward</th>
                       <th className="py-2 px-2 text-right">Goal Distance</th>
                     </tr>
                   </thead>
