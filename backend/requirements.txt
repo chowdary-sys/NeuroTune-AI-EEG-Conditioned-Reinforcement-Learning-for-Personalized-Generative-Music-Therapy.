@@ -1,0 +1,12 @@
+# Python Backend Requirements for NeuroTune AI
+# "EEG-Conditioned Reinforcement Learning for Personalized Generative Music Therapy"
+
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+numpy==2.2.1
+pandas==2.2.3
+scipy==1.15.0
+scikit-learn==1.6.1
+sqlite3-to-mysql==2.1.18; sys_platform == 'linux'
+python-multipart==0.0.20

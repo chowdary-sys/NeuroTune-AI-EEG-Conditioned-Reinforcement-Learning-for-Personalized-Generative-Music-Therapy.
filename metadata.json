@@ -1,0 +1,6 @@
+{
+  "name": "NeuroTune AI – EEG Reinforcement Learning Music Therapy",
+  "description": "A closed-loop EEG-conditioned reinforcement learning platform for personalized generative music therapy and experimental simulation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
