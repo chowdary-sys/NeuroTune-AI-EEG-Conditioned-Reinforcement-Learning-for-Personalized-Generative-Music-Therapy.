@@ -53,7 +53,7 @@ export default function App() {
   const isLegalPage = activeTab === 'privacy' || activeTab === 'terms';
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans">
       <Header
         activeTab={activeTab}
         onSelectTab={handleSelectTab}
@@ -95,22 +95,22 @@ export default function App() {
         {activeTab === 'terms' && <TermsTab />}
       </main>
 
-      <footer className="border-t border-slate-900 bg-slate-950 py-6 text-xs text-slate-400">
+      <footer className="border-t border-slate-200 bg-white py-6 text-xs text-slate-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-slate-400">
+          <div className="text-slate-600">
             NeuroTune: Closed-Loop EEG Music Therapy Simulation (Not a Medical Device)
           </div>
           <div className="flex items-center gap-5 text-xs">
             <button
               onClick={() => handleSelectTab('overview')}
-              className="text-slate-400 hover:text-white transition-colors cursor-pointer whitespace-nowrap"
+              className="text-slate-600 hover:text-slate-900 transition-colors cursor-pointer whitespace-nowrap"
             >
               Home
             </button>
             <button
               onClick={() => handleSelectTab('privacy')}
               className={`transition-colors cursor-pointer whitespace-nowrap ${
-                activeTab === 'privacy' ? 'text-cyan-400 font-medium' : 'text-slate-400 hover:text-white'
+                activeTab === 'privacy' ? 'text-cyan-700 font-semibold' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Privacy Policy
@@ -118,7 +118,7 @@ export default function App() {
             <button
               onClick={() => handleSelectTab('terms')}
               className={`transition-colors cursor-pointer whitespace-nowrap ${
-                activeTab === 'terms' ? 'text-cyan-400 font-medium' : 'text-slate-400 hover:text-white'
+                activeTab === 'terms' ? 'text-cyan-700 font-semibold' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Terms and Conditions

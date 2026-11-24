@@ -25,11 +25,11 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ height = 120 }
 
       ctx.clearRect(0, 0, width, h);
 
-      // Dark background with subtle grid lines
-      ctx.fillStyle = '#0b0f19';
+      // White background with subtle light slate grid line
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, width, h);
 
-      ctx.strokeStyle = 'rgba(30, 41, 59, 0.6)';
+      ctx.strokeStyle = 'rgba(203, 213, 225, 0.8)';
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(0, h / 2);
@@ -37,8 +37,7 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ height = 120 }
       ctx.stroke();
 
       if (!analyser) {
-        // Flat resting line
-        ctx.strokeStyle = 'rgba(71, 85, 105, 0.4)';
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.7)';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.moveTo(0, h / 2);
@@ -47,7 +46,7 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ height = 120 }
         return;
       }
 
-      // 1. Frequency Spectrum Bars (Background)
+      // 1. Frequency Spectrum Bars
       const bufferLength = analyser.frequencyBinCount;
       const freqData = new Uint8Array(bufferLength);
       analyser.getByteFrequencyData(freqData);
@@ -58,17 +57,17 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ height = 120 }
       for (let i = 0; i < bufferLength / 2; i++) {
         const barHeight = (freqData[i] / 255) * (h * 0.85);
 
-        ctx.fillStyle = 'rgba(6, 182, 212, 0.35)';
+        ctx.fillStyle = 'rgba(8, 145, 178, 0.22)';
         ctx.fillRect(barX, h - barHeight, barWidth - 1, barHeight);
         barX += barWidth;
       }
 
-      // 2. Waveform Oscilloscope (Foreground)
+      // 2. Waveform Oscilloscope
       const timeData = new Uint8Array(bufferLength);
       analyser.getByteTimeDomainData(timeData);
 
       ctx.lineWidth = 2;
-      ctx.strokeStyle = '#38bdf8'; // Sky cyan
+      ctx.strokeStyle = '#0891b2';
       ctx.beginPath();
 
       const sliceWidth = width / bufferLength;
@@ -98,7 +97,7 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({ height = 120 }
   }, []);
 
   return (
-    <div className="w-full rounded-lg overflow-hidden border border-slate-800 bg-slate-950">
+    <div className="w-full rounded-lg overflow-hidden border border-slate-200 bg-white">
       <canvas
         ref={canvasRef}
         width={600}

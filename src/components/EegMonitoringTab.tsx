@@ -113,10 +113,10 @@ export const EegMonitoringTab: React.FC = () => {
       const w = canvas.width;
       const h = canvas.height;
 
-      ctx.fillStyle = '#080c14';
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, w, h);
 
-      ctx.strokeStyle = 'rgba(30, 41, 59, 0.4)';
+      ctx.strokeStyle = 'rgba(226, 232, 240, 0.9)';
       ctx.lineWidth = 1;
       const numLines = 8;
       for (let i = 1; i < numLines; i++) {
@@ -136,19 +136,19 @@ export const EegMonitoringTab: React.FC = () => {
         color: string;
         baseY: number;
       }> = [
-        { key: 'f3', label: 'Sensor 1: F3 (Front Left)', color: '#38bdf8', baseY: h * 0.22 },
-        { key: 'f4', label: 'Sensor 2: F4 (Front Right)', color: '#f59e0b', baseY: h * 0.52 },
-        { key: 'pz', label: 'Sensor 3: Pz (Top Back)', color: '#34d399', baseY: h * 0.82 },
+        { key: 'f3', label: 'Sensor 1: F3 (Front Left)', color: '#0284c7', baseY: h * 0.22 },
+        { key: 'f4', label: 'Sensor 2: F4 (Front Right)', color: '#d97706', baseY: h * 0.52 },
+        { key: 'pz', label: 'Sensor 3: Pz (Top Back)', color: '#059669', baseY: h * 0.82 },
       ];
 
       channels.forEach(({ key, label, color, baseY }) => {
         if (selectedChannel !== 'all' && selectedChannel !== key) return;
 
         ctx.fillStyle = color;
-        ctx.font = '11px JetBrains Mono';
+        ctx.font = '600 11px JetBrains Mono';
         ctx.fillText(label, 12, baseY - 22);
 
-        ctx.strokeStyle = 'rgba(71, 85, 105, 0.3)';
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.45)';
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
         ctx.moveTo(0, baseY);
@@ -156,7 +156,7 @@ export const EegMonitoringTab: React.FC = () => {
         ctx.stroke();
         ctx.setLineDash([]);
 
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 1.75;
         ctx.strokeStyle = color;
         ctx.beginPath();
 
@@ -227,32 +227,32 @@ export const EegMonitoringTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex items-start gap-3">
-        <Info className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
-        <div className="text-xs text-slate-300 leading-relaxed">
-          <strong className="text-white block mb-0.5">What This Page Does:</strong>
+      <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-start gap-3">
+        <Info className="w-5 h-5 text-cyan-600 shrink-0 mt-0.5" />
+        <div className="text-xs text-slate-700 leading-relaxed">
+          <strong className="text-slate-900 block mb-0.5">What This Page Does:</strong>
           This screen displays live simulated brainwaves from 3 sensors on the head (Front Left F3, Front Right F4, and Top Back Pz).
           Pick a feeling below to test how the brainwaves change, add signal noise to test robustness, or upload your own CSV brainwave file.
         </div>
       </div>
 
-      <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
         <div className="flex items-center gap-3">
           <div
             className={`p-2 rounded-lg border ${
               isRealMode
-                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                : 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                : 'bg-cyan-50 border-cyan-200 text-cyan-700'
             }`}
           >
             <Radio className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-white">
+            <h3 className="text-sm font-semibold text-slate-900">
               {isRealMode ? 'Using External Device or Uploaded CSV File' : 'Using Built-In Brainwave Simulator'}
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Source: <span className="font-mono text-slate-300">{defaultEegEngine.getDeviceName()}</span> · 128 readings per second
+            <p className="text-xs text-slate-600 mt-0.5">
+              Source: <span className="font-mono text-slate-800">{defaultEegEngine.getDeviceName()}</span> · 128 readings per second
             </p>
           </div>
         </div>
@@ -266,8 +266,8 @@ export const EegMonitoringTab: React.FC = () => {
             }}
             className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-colors cursor-pointer ${
               isRealMode
-                ? 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
-                : 'bg-emerald-600/20 text-emerald-300 border-emerald-500/30 hover:bg-emerald-600/30'
+                ? 'bg-slate-100 text-slate-800 border-slate-300 hover:bg-slate-200'
+                : 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
             }`}
           >
             {isRealMode ? 'Back to Simulator' : 'Test Real Device Mode'}
@@ -283,18 +283,18 @@ export const EegMonitoringTab: React.FC = () => {
           <button
             onClick={() => fileInputRef.current?.click()}
             title="Upload your own CSV recording"
-            className="px-3 py-1.5 rounded-md text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 cursor-pointer"
+            className="px-3 py-1.5 rounded-md text-xs font-medium bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 flex items-center gap-1.5 cursor-pointer"
           >
-            <Upload className="w-3.5 h-3.5 text-cyan-400" />
+            <Upload className="w-3.5 h-3.5 text-cyan-600" />
             <span>Upload CSV</span>
           </button>
 
           <button
             onClick={downloadSampleCsv}
             title="Download a sample CSV recording"
-            className="px-2.5 py-1.5 rounded-md text-xs text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-800 transition-colors cursor-pointer flex items-center gap-1.5"
+            className="px-2.5 py-1.5 rounded-md text-xs text-slate-700 hover:text-slate-900 hover:bg-slate-100 border border-slate-300 transition-colors cursor-pointer flex items-center gap-1.5"
           >
-            <Download className="w-3.5 h-3.5 text-slate-400" />
+            <Download className="w-3.5 h-3.5 text-slate-500" />
             <span>Sample CSV</span>
           </button>
         </div>
@@ -302,26 +302,26 @@ export const EegMonitoringTab: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-8 space-y-4">
-          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5">
+          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <div>
-                <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-cyan-400" />
+                <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-cyan-600" />
                   Live Brainwave Lines (3 Sensors)
                 </h3>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-600">
                   Switch between raw messy waves and cleaned waves (0.5 to 45 Hz filter)
                 </span>
               </div>
 
               <div className="flex items-center gap-2 text-xs">
-                <div className="flex items-center p-0.5 bg-slate-950 rounded-md border border-slate-800">
+                <div className="flex items-center p-0.5 bg-slate-100 rounded-md border border-slate-200">
                   <button
                     onClick={() => setFilterMode('raw')}
                     className={`px-2.5 py-1 rounded-sm transition-colors cursor-pointer ${
                       filterMode === 'raw'
-                        ? 'bg-slate-800 text-amber-300 font-semibold'
-                        : 'text-slate-400 hover:text-slate-200'
+                        ? 'bg-white text-amber-700 font-semibold shadow-2xs'
+                        : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
                     Raw (Unfiltered)
@@ -330,8 +330,8 @@ export const EegMonitoringTab: React.FC = () => {
                     onClick={() => setFilterMode('filtered')}
                     className={`px-2.5 py-1 rounded-sm transition-colors cursor-pointer ${
                       filterMode === 'filtered'
-                        ? 'bg-slate-800 text-cyan-400 font-semibold'
-                        : 'text-slate-400 hover:text-slate-200'
+                        ? 'bg-white text-cyan-700 font-semibold shadow-2xs'
+                        : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
                     Cleaned Signal
@@ -341,7 +341,7 @@ export const EegMonitoringTab: React.FC = () => {
                 <select
                   value={selectedChannel}
                   onChange={(e) => setSelectedChannel(e.target.value as 'all' | 'f3' | 'f4' | 'pz')}
-                  className="bg-slate-950 border border-slate-800 rounded-md px-2 py-1 text-slate-300 focus:outline-none cursor-pointer"
+                  className="bg-white border border-slate-300 rounded-md px-2 py-1 text-slate-800 focus:outline-none cursor-pointer"
                 >
                   <option value="all">Show All 3 Sensors</option>
                   <option value="f3">F3 (Front Left)</option>
@@ -351,35 +351,35 @@ export const EegMonitoringTab: React.FC = () => {
               </div>
             </div>
 
-            <div className="rounded-lg overflow-hidden border border-slate-800">
+            <div className="rounded-lg overflow-hidden border border-slate-200 bg-white">
               <canvas
                 ref={canvasRef}
                 width={800}
                 height={320}
-                className="w-full block bg-slate-950"
+                className="w-full block bg-white"
                 style={{ height: '320px' }}
               />
             </div>
 
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400 font-mono tabular-nums">
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600 font-mono tabular-nums">
               <div className="flex items-center gap-4">
                 <span>Height: ±50 μV</span>
                 <span>Window: 3 seconds</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-emerald-400">Clarity: {features.signalQuality}%</span>
+                <span className="text-emerald-700 font-semibold">Clarity: {features.signalQuality}%</span>
                 <span>·</span>
                 <span>Noise: {features.noiseRms} μV</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5">
-            <h4 className="text-sm font-semibold text-white mb-1 flex items-center gap-2">
-              <Sliders className="w-4 h-4 text-cyan-400" />
+          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
+            <h4 className="text-sm font-semibold text-slate-900 mb-1 flex items-center gap-2">
+              <Sliders className="w-4 h-4 text-cyan-600" />
               Test Different Listener Moods and Signal Noise
             </h4>
-            <p className="text-xs text-slate-400 mb-4">
+            <p className="text-xs text-slate-600 mb-4">
               Click any feeling below to change the simulated listener brainwaves right away:
             </p>
 
@@ -392,15 +392,15 @@ export const EegMonitoringTab: React.FC = () => {
                     onClick={() => handleSelectPreset(preset)}
                     className={`p-3 rounded-lg border text-left transition-colors cursor-pointer ${
                       isActive
-                        ? 'bg-slate-800/90 border-cyan-500'
-                        : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
+                        ? 'bg-cyan-50 border-cyan-500'
+                        : 'bg-slate-50 border-slate-200 hover:border-slate-300'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-white">{preset.name}</span>
-                      {isActive && <span className="text-[10px] font-mono text-cyan-400">ACTIVE</span>}
+                      <span className="text-xs font-semibold text-slate-900">{preset.name}</span>
+                      {isActive && <span className="text-[10px] font-mono text-cyan-700 font-bold">ACTIVE</span>}
                     </div>
-                    <p className="text-[11px] text-slate-400 mt-1 leading-normal">
+                    <p className="text-[11px] text-slate-600 mt-1 leading-normal">
                       {preset.desc}
                     </p>
                   </button>
@@ -408,12 +408,12 @@ export const EegMonitoringTab: React.FC = () => {
               })}
             </div>
 
-            <div className="pt-3 border-t border-slate-800">
+            <div className="pt-3 border-t border-slate-200">
               <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="text-slate-300">
-                  Add Background Static / Noise (σ): <strong className="text-cyan-400 font-mono">{noiseLevel.toFixed(1)}</strong>
+                <span className="text-slate-700">
+                  Add Background Static / Noise (σ): <strong className="text-cyan-700 font-mono">{noiseLevel.toFixed(1)}</strong>
                 </span>
-                <span className="text-slate-400 text-[11px]">Paper tests: 0.5, 1.0, 1.5, 2.0</span>
+                <span className="text-slate-500 text-[11px]">Paper tests: 0.5, 1.0, 1.5, 2.0</span>
               </div>
               <input
                 type="range"
@@ -422,9 +422,9 @@ export const EegMonitoringTab: React.FC = () => {
                 step="0.1"
                 value={noiseLevel}
                 onChange={handleNoiseChange}
-                className="w-full accent-cyan-400 cursor-pointer"
+                className="w-full accent-cyan-600 cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+              <div className="flex justify-between text-[10px] text-slate-500 mt-1">
                 <span>0.5 (Very Clean)</span>
                 <span>1.0 (Normal Noise)</span>
                 <span>1.5 (Noisy)</span>
@@ -435,96 +435,96 @@ export const EegMonitoringTab: React.FC = () => {
         </div>
 
         <div className="lg:col-span-4 space-y-4">
-          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5">
-            <h4 className="text-sm font-semibold text-white mb-1">
+          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
+            <h4 className="text-sm font-semibold text-slate-900 mb-1">
               Brainwave Energy by Speed
             </h4>
-            <p className="text-xs text-slate-400 mb-4">
+            <p className="text-xs text-slate-600 mb-4">
               How strong each wave rhythm is right now:
             </p>
 
             <div className="space-y-4">
               <div>
-                <div className="text-xs font-semibold text-sky-400 mb-2">
+                <div className="text-xs font-semibold text-sky-700 mb-2">
                   F3 Sensor (Front Left)
                 </div>
                 <div className="space-y-2 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-300">Theta (4 to 8 Hz · Sleepy)</span>
-                    <span className="text-slate-200 font-mono tabular-nums">{features.thetaF3.toFixed(1)}</span>
+                    <span className="text-slate-700">Theta (4 to 8 Hz · Sleepy)</span>
+                    <span className="text-slate-900 font-mono tabular-nums font-medium">{features.thetaF3.toFixed(1)}</span>
                   </div>
-                  <div className="w-full bg-slate-950 h-2 rounded-xs overflow-hidden">
+                  <div className="w-full bg-slate-100 h-2 rounded-xs overflow-hidden">
                     <div
-                      className="bg-slate-400 h-full transition-all"
+                      className="bg-slate-500 h-full transition-all"
                       style={{ width: `${Math.min(100, features.thetaF3 * 3)}%` }}
                     />
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-300">Alpha (8 to 13 Hz · Relaxed)</span>
-                    <span className="text-slate-200 font-mono tabular-nums">{features.alphaF3.toFixed(1)}</span>
+                    <span className="text-slate-700">Alpha (8 to 13 Hz · Relaxed)</span>
+                    <span className="text-slate-900 font-mono tabular-nums font-medium">{features.alphaF3.toFixed(1)}</span>
                   </div>
-                  <div className="w-full bg-slate-950 h-2 rounded-xs overflow-hidden">
+                  <div className="w-full bg-slate-100 h-2 rounded-xs overflow-hidden">
                     <div
-                      className="bg-cyan-400 h-full transition-all"
+                      className="bg-cyan-600 h-full transition-all"
                       style={{ width: `${Math.min(100, features.alphaF3 * 3)}%` }}
                     />
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-300">Beta (13 to 30 Hz · Alert / Tense)</span>
-                    <span className="text-slate-200 font-mono tabular-nums">{features.betaF3.toFixed(1)}</span>
+                    <span className="text-slate-700">Beta (13 to 30 Hz · Alert / Tense)</span>
+                    <span className="text-slate-900 font-mono tabular-nums font-medium">{features.betaF3.toFixed(1)}</span>
                   </div>
-                  <div className="w-full bg-slate-950 h-2 rounded-xs overflow-hidden">
+                  <div className="w-full bg-slate-100 h-2 rounded-xs overflow-hidden">
                     <div
-                      className="bg-amber-400 h-full transition-all"
+                      className="bg-amber-500 h-full transition-all"
                       style={{ width: `${Math.min(100, features.betaF3 * 3)}%` }}
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-800">
-                <div className="text-xs font-semibold text-amber-400 mb-2">
+              <div className="pt-3 border-t border-slate-200">
+                <div className="text-xs font-semibold text-amber-700 mb-2">
                   F4 Sensor (Front Right)
                 </div>
                 <div className="space-y-2 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-300">Alpha (Relaxed)</span>
-                    <span className="text-slate-200 font-mono tabular-nums">{features.alphaF4.toFixed(1)}</span>
+                    <span className="text-slate-700">Alpha (Relaxed)</span>
+                    <span className="text-slate-900 font-mono tabular-nums font-medium">{features.alphaF4.toFixed(1)}</span>
                   </div>
-                  <div className="w-full bg-slate-950 h-2 rounded-xs overflow-hidden">
+                  <div className="w-full bg-slate-100 h-2 rounded-xs overflow-hidden">
                     <div
-                      className="bg-cyan-400 h-full transition-all"
+                      className="bg-cyan-600 h-full transition-all"
                       style={{ width: `${Math.min(100, features.alphaF4 * 3)}%` }}
                     />
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-300">Beta (Alert / Tense)</span>
-                    <span className="text-slate-200 font-mono tabular-nums">{features.betaF4.toFixed(1)}</span>
+                    <span className="text-slate-700">Beta (Alert / Tense)</span>
+                    <span className="text-slate-900 font-mono tabular-nums font-medium">{features.betaF4.toFixed(1)}</span>
                   </div>
-                  <div className="w-full bg-slate-950 h-2 rounded-xs overflow-hidden">
+                  <div className="w-full bg-slate-100 h-2 rounded-xs overflow-hidden">
                     <div
-                      className="bg-amber-400 h-full transition-all"
+                      className="bg-amber-500 h-full transition-all"
                       style={{ width: `${Math.min(100, features.betaF4 * 3)}%` }}
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-800">
-                <div className="text-xs font-semibold text-emerald-400 mb-2">
+              <div className="pt-3 border-t border-slate-200">
+                <div className="text-xs font-semibold text-emerald-700 mb-2">
                   Pz Sensor (Top Back)
                 </div>
                 <div className="space-y-2 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-300">Beta (Alertness)</span>
-                    <span className="text-slate-200 font-mono tabular-nums">{features.betaPz.toFixed(1)}</span>
+                    <span className="text-slate-700">Beta (Alertness)</span>
+                    <span className="text-slate-900 font-mono tabular-nums font-medium">{features.betaPz.toFixed(1)}</span>
                   </div>
-                  <div className="w-full bg-slate-950 h-2 rounded-xs overflow-hidden">
+                  <div className="w-full bg-slate-100 h-2 rounded-xs overflow-hidden">
                     <div
-                      className="bg-emerald-400 h-full transition-all"
+                      className="bg-emerald-600 h-full transition-all"
                       style={{ width: `${Math.min(100, features.betaPz * 3)}%` }}
                     />
                   </div>
@@ -533,36 +533,36 @@ export const EegMonitoringTab: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-5">
-            <h4 className="text-sm font-semibold text-white mb-3">
+          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
+            <h4 className="text-sm font-semibold text-slate-900 mb-3">
               Two Main Mood Clues From These Waves
             </h4>
 
             <div className="space-y-3 text-xs">
-              <div className="p-3 rounded-lg bg-slate-950 border border-slate-800">
+              <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-300 font-medium">Left vs Right Balance (FAA)</span>
+                  <span className="text-slate-800 font-medium">Left vs Right Balance (FAA)</span>
                   <span
                     className={`font-mono font-bold tabular-nums ${
-                      features.faa >= 0 ? 'text-emerald-400' : 'text-rose-400'
+                      features.faa >= 0 ? 'text-emerald-700' : 'text-rose-600'
                     }`}
                   >
                     {features.faa > 0 ? `+${features.faa}` : features.faa}
                   </span>
                 </div>
-                <div className="text-[11px] text-slate-400 mt-1">
+                <div className="text-[11px] text-slate-600 mt-1">
                   {features.faa >= 0
                     ? 'Positive = More left-brain activity (happier mood clue)'
                     : 'Negative = More right-brain activity (stressed mood clue)'}
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-slate-950 border border-slate-800">
+              <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-300 font-medium">Energy Ratio (Beta / Slow)</span>
-                  <span className="font-mono font-bold text-cyan-400 tabular-nums">{features.arousalRatio}</span>
+                  <span className="text-slate-800 font-medium">Energy Ratio (Beta / Slow)</span>
+                  <span className="font-mono font-bold text-cyan-700 tabular-nums">{features.arousalRatio}</span>
                 </div>
-                <div className="text-[11px] text-slate-400 mt-1">
+                <div className="text-[11px] text-slate-600 mt-1">
                   {features.arousalRatio > 0.5
                     ? 'Higher score = Brain looks busy, alert, or tense'
                     : 'Lower score = Brain looks calm and relaxed'}

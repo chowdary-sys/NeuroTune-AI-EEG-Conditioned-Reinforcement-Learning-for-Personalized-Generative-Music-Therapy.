@@ -63,26 +63,26 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
 
   return (
     <div className="flex flex-col items-center">
-      <div className="relative border border-slate-800 rounded-lg bg-slate-950 p-2 w-full max-w-[380px]">
+      <div className="relative border border-slate-200 rounded-lg bg-white p-2 w-full max-w-[380px]">
         <svg
           viewBox={`0 0 ${size} ${size}`}
           onClick={handleSvgClick}
           className={`w-full h-auto ${interactive ? 'cursor-pointer' : 'cursor-default'} select-none`}
         >
-          {/* Subtle Quadrant Background Tints (neutral slate, amber, emerald, rose - no purple) */}
+          {/* Light Quadrant Background Tints */}
           <rect
             x={padding}
             y={padding}
             width={plotWidth / 2}
             height={plotHeight / 2}
-            fill="rgba(244, 63, 94, 0.05)"
+            fill="rgba(244, 63, 94, 0.06)"
           />
           <rect
             x={padding + plotWidth / 2}
             y={padding}
             width={plotWidth / 2}
             height={plotHeight / 2}
-            fill="rgba(245, 158, 11, 0.04)"
+            fill="rgba(245, 158, 11, 0.06)"
           />
           <rect
             x={padding}
@@ -96,7 +96,7 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             y={padding + plotHeight / 2}
             width={plotWidth / 2}
             height={plotHeight / 2}
-            fill="rgba(16, 185, 129, 0.06)"
+            fill="rgba(16, 185, 129, 0.07)"
           />
 
           <line
@@ -104,7 +104,7 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             y1={padding + plotHeight / 2}
             x2={padding + plotWidth}
             y2={padding + plotHeight / 2}
-            stroke="rgba(71, 85, 105, 0.5)"
+            stroke="#94a3b8"
             strokeWidth="1.5"
           />
           <line
@@ -112,7 +112,7 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             y1={padding}
             x2={padding + plotWidth / 2}
             y2={padding + plotHeight}
-            stroke="rgba(71, 85, 105, 0.5)"
+            stroke="#94a3b8"
             strokeWidth="1.5"
           />
 
@@ -121,7 +121,7 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             cy={padding + plotHeight / 2}
             r={plotWidth * 0.25}
             fill="none"
-            stroke="rgba(51, 65, 85, 0.3)"
+            stroke="#cbd5e1"
             strokeDasharray="4 4"
           />
           <circle
@@ -129,14 +129,14 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             cy={padding + plotHeight / 2}
             r={plotWidth * 0.45}
             fill="none"
-            stroke="rgba(51, 65, 85, 0.2)"
+            stroke="#e2e8f0"
             strokeDasharray="4 4"
           />
 
           <text
             x={padding + 10}
             y={padding + 20}
-            className="text-[11px] font-mono fill-rose-400/90 font-semibold tracking-wide"
+            className="text-[11px] font-mono fill-rose-700 font-semibold tracking-wide"
           >
             STRESSED / TENSE
           </text>
@@ -144,14 +144,14 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             x={padding + plotWidth - 10}
             y={padding + 20}
             textAnchor="end"
-            className="text-[11px] font-mono fill-amber-400/90 font-semibold tracking-wide"
+            className="text-[11px] font-mono fill-amber-700 font-semibold tracking-wide"
           >
             HAPPY / EXCITED
           </text>
           <text
             x={padding + 10}
             y={padding + plotHeight - 12}
-            className="text-[11px] font-mono fill-slate-300/90 font-semibold tracking-wide"
+            className="text-[11px] font-mono fill-slate-600 font-semibold tracking-wide"
           >
             SAD / TIRED
           </text>
@@ -159,7 +159,7 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             x={padding + plotWidth - 10}
             y={padding + plotHeight - 12}
             textAnchor="end"
-            className="text-[11px] font-mono fill-emerald-400/90 font-semibold tracking-wide"
+            className="text-[11px] font-mono fill-emerald-700 font-semibold tracking-wide"
           >
             CALM / RELAXED
           </text>
@@ -168,7 +168,7 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             x={padding + plotWidth / 2}
             y={padding - 14}
             textAnchor="middle"
-            className="text-[10px] font-mono fill-slate-300 uppercase tracking-wider font-semibold"
+            className="text-[10px] font-mono fill-slate-700 uppercase tracking-wider font-semibold"
           >
             HIGH ENERGY / TENSE (+Arousal)
           </text>
@@ -176,7 +176,7 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             x={padding + plotWidth / 2}
             y={size - 12}
             textAnchor="middle"
-            className="text-[10px] font-mono fill-slate-300 uppercase tracking-wider font-semibold"
+            className="text-[10px] font-mono fill-slate-700 uppercase tracking-wider font-semibold"
           >
             LOW ENERGY / CALM (-Arousal)
           </text>
@@ -184,7 +184,7 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             x={padding - 6}
             y={padding + plotHeight / 2 + 3}
             textAnchor="end"
-            className="text-[10px] font-mono fill-slate-400 font-semibold"
+            className="text-[10px] font-mono fill-slate-600 font-semibold"
           >
             - Mood
           </text>
@@ -192,7 +192,7 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             x={padding + plotWidth + 6}
             y={padding + plotHeight / 2 + 3}
             textAnchor="start"
-            className="text-[10px] font-mono fill-slate-400 font-semibold"
+            className="text-[10px] font-mono fill-slate-600 font-semibold"
           >
             + Mood
           </text>
@@ -201,18 +201,18 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             cx={targetX}
             cy={targetY}
             r={targetRadius}
-            fill="rgba(16, 185, 129, 0.14)"
-            stroke="#10b981"
+            fill="rgba(16, 185, 129, 0.16)"
+            stroke="#059669"
             strokeWidth="1.5"
             strokeDasharray="3 3"
           />
 
-          <circle cx={targetX} cy={targetY} r={6} fill="#10b981" />
+          <circle cx={targetX} cy={targetY} r={6} fill="#059669" />
           <text
             x={targetX}
             y={targetY - 11}
             textAnchor="middle"
-            className="text-[10px] font-mono fill-emerald-400 font-bold"
+            className="text-[10px] font-mono fill-emerald-700 font-bold"
           >
             Calm Goal ({targetEmotion.valence > 0 ? `+${targetEmotion.valence}` : targetEmotion.valence}, {targetEmotion.arousal > 0 ? `+${targetEmotion.arousal}` : targetEmotion.arousal})
           </text>
@@ -222,10 +222,10 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
               <polyline
                 points={trajectory.map((p) => `${toSvgX(p.valence)},${toSvgY(p.arousal)}`).join(' ')}
                 fill="none"
-                stroke="#38bdf8"
+                stroke="#0284c7"
                 strokeWidth="2"
                 strokeDasharray="4 2"
-                opacity="0.75"
+                opacity="0.85"
               />
               {trajectory.map((p, idx) => (
                 <circle
@@ -233,8 +233,8 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
                   cx={toSvgX(p.valence)}
                   cy={toSvgY(p.arousal)}
                   r={3}
-                  fill="#0284c7"
-                  stroke="#38bdf8"
+                  fill="#0369a1"
+                  stroke="#0284c7"
                   strokeWidth="1"
                 />
               ))}
@@ -245,39 +245,39 @@ export const EmotionCircumplex: React.FC<EmotionCircumplexProps> = ({
             cx={currX}
             cy={currY}
             r={14}
-            fill="rgba(56, 189, 248, 0.2)"
-            stroke="#38bdf8"
+            fill="rgba(2, 132, 199, 0.15)"
+            stroke="#0284c7"
             strokeWidth="1"
             strokeDasharray="2 2"
           />
 
-          <circle cx={currX} cy={currY} r={7} fill="#0ea5e9" stroke="#ffffff" strokeWidth="2" />
+          <circle cx={currX} cy={currY} r={7} fill="#0284c7" stroke="#ffffff" strokeWidth="2" />
           <text
             x={currX}
             y={currY + 20}
             textAnchor="middle"
-            className="text-[10px] font-mono fill-sky-200 font-semibold"
+            className="text-[10px] font-mono fill-sky-900 font-bold"
           >
             Now ({currentEmotion.valence > 0 ? `+${currentEmotion.valence}` : currentEmotion.valence}, {currentEmotion.arousal > 0 ? `+${currentEmotion.arousal}` : currentEmotion.arousal})
           </text>
         </svg>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 w-full max-w-[380px] text-xs text-slate-300">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 w-full max-w-[380px] text-xs text-slate-700">
         <span className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-xs bg-sky-500 inline-block"></span>
+          <span className="w-2.5 h-2.5 rounded-xs bg-sky-600 inline-block"></span>
           <span>
-            Now: <strong className="text-white">{friendlyQuadrant(currentEmotion.quadrant)}</strong>
+            Now: <strong className="text-slate-900">{friendlyQuadrant(currentEmotion.quadrant)}</strong>
           </span>
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-xs bg-emerald-500 inline-block"></span>
+          <span className="w-2.5 h-2.5 rounded-xs bg-emerald-600 inline-block"></span>
           <span>Calm Goal (d_T ≤ 0.30)</span>
         </span>
       </div>
 
       {interactive && (
-        <p className="text-[11px] text-slate-400 mt-1.5 text-center">
+        <p className="text-[11px] text-slate-500 mt-1.5 text-center">
           Click anywhere inside the map above to move your green Calm Goal.
         </p>
       )}
